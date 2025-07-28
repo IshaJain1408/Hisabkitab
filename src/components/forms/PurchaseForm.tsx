@@ -7,7 +7,6 @@ interface Props {
   onSave: (data: {
     productName: string;
     purchasingPrice: string;
-    sellingPrice: string;
     quantity: string;
   }) => void;
   onClose: () => void;
@@ -17,9 +16,6 @@ const FormSchema = Yup.object().shape({
   productName: Yup.string().required('Product Name is required'),
   purchasingPrice: Yup.number()
     .required('Purchasing Price is required')
-    .typeError('Must be a number'),
-  sellingPrice: Yup.number()
-    .required('Selling Price is required')
     .typeError('Must be a number'),
   quantity: Yup.number()
     .required('Quantity is required')
@@ -31,7 +27,6 @@ const TransactionForm: React.FC<Props> = ({ onSave }) => (
     initialValues={{
       productName: '',
       purchasingPrice: '',
-      sellingPrice: '',
       quantity: '',
     }}
     validationSchema={FormSchema}
@@ -63,18 +58,6 @@ const TransactionForm: React.FC<Props> = ({ onSave }) => (
         />
         {touched.purchasingPrice && errors.purchasingPrice && (
           <Text style={styles.error}>{errors.purchasingPrice}</Text>
-        )}
-
-        <TextInput
-          placeholder="Selling Price"
-          style={styles.input}
-          keyboardType="numeric"
-          onChangeText={handleChange('sellingPrice')}
-          onBlur={handleBlur('sellingPrice')}
-          value={values.sellingPrice}
-        />
-        {touched.sellingPrice && errors.sellingPrice && (
-          <Text style={styles.error}>{errors.sellingPrice}</Text>
         )}
 
         <TextInput

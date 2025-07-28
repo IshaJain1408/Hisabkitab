@@ -50,14 +50,14 @@ const Header: React.FC<HeaderProps> = ({ userName, handleLogout }) => {
     fetchUserPhoto();
   }, []);
 
-  const onLogoutPress = () => {
-    setDrawerVisible(false);
-    handleLogout();
-  };
+  // const onLogoutPress = () => {
+  //   setDrawerVisible(false);
+  //   handleLogout();
+  // };
 
   const onMenuItemPress = (tab: string) => {
     setDrawerVisible(false);
-    navigation.navigate('CustomerScreen', { selectedTab: tab });
+    navigation.navigate('TransactionScreen', { selectedTab: tab });
   };
 
   return (
@@ -114,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({ userName, handleLogout }) => {
               </TouchableOpacity>
             ))}
 
-            <TouchableOpacity style={styles.menuItem} onPress={onLogoutPress}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
               <Ionicons
                 name="log-out-outline"
                 size={18}

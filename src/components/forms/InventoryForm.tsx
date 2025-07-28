@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 interface Props {
   onSave: (data: {
     productName: string;
-    sellingPrice: string;
+    purchasingPrice: string;
     quantity: string;
   }) => void;
   onClose: () => void;
@@ -14,7 +14,7 @@ interface Props {
 
 const InventorySchema = Yup.object().shape({
   productName: Yup.string().required('Product Name is required'),
-  sellingPrice: Yup.number()
+  purchasingPrice: Yup.number()
     .required('Selling Price is required')
     .typeError('Must be a number'),
   quantity: Yup.number()
@@ -24,7 +24,7 @@ const InventorySchema = Yup.object().shape({
 
 const InventoryForm: React.FC<Props> = ({ onSave }) => (
   <Formik
-    initialValues={{ productName: '', sellingPrice: '', quantity: '' }}
+    initialValues={{ productName: '', purchasingPrice: '', quantity: '' }}
     validationSchema={InventorySchema}
     onSubmit={(values, { resetForm }) => {
       onSave(values);
@@ -45,15 +45,15 @@ const InventoryForm: React.FC<Props> = ({ onSave }) => (
         )}
 
         <TextInput
-          placeholder="Selling Price"
+          placeholder="Purchasing Price"
           style={styles.input}
           keyboardType="numeric"
-          onChangeText={handleChange('sellingPrice')}
-          onBlur={handleBlur('sellingPrice')}
-          value={values.sellingPrice}
+          onChangeText={handleChange('purchasingPrice')}
+          onBlur={handleBlur('purchasingPrice')}
+          value={values.purchasingPrice}
         />
-        {touched.sellingPrice && errors.sellingPrice && (
-          <Text style={styles.error}>{errors.sellingPrice}</Text>
+        {touched.purchasingPrice && errors.purchasingPrice && (
+          <Text style={styles.error}>{errors.purchasingPrice}</Text>
         )}
 
         <TextInput

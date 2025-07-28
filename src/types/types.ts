@@ -1,7 +1,7 @@
 export type RootStackParamList = {
   WelcomeScreen: undefined;
   HomeScreen: undefined;
-  CustomerScreen:undefined;
+  TransactionScreen:undefined;
   AddCustomerScreen:undefined;
   CustomerTransactionScreen: undefined;
   BalanceSheetScreen:undefined

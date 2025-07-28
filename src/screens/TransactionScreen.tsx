@@ -1,27 +1,23 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
-import Header from '../components/common/Header';
 import TransactionModal from '../components/common/TransactionModal';
-import CustomerList from '../components/customer/CustomerList';
-import { useCustomerScreenLogic } from '../hooks/useCustomerScreenLogic';
-import DownloadBalanceSheetButton from '../components/common/DownloadBalanceSheetButton';
+import { useTransactionLogic } from '../hooks/useTransactionLogic';
+import TransactionList from '../components/user/TransactionList';
 
 const tabs = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
 
-const CustomerScreen = () => {
+const TransactionScreen = () => {
   const {
-    user,
     showModal,
     customers,
     setShowModal,
     handleTransactionSave: handleSaleSave,
     handlePurchaseSave,
     handleInventorySave,
-    handleLogout,
     fetchCurrentUser,
     fetchCustomerData,
-  } = useCustomerScreenLogic();
+  } = useTransactionLogic();
   const route = useRoute<any>();
 
   const [activeTab, setActiveTab] = useState('Purchase');
@@ -62,30 +58,7 @@ const CustomerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Header handleLogout={handleLogout} userName={user?.user?.name || ''} />
-      <DownloadBalanceSheetButton />
-      <View style={styles.tabContainer}>
-        {tabs.map(tab => (
-          <TouchableOpacity
-            key={tab}
-            style={[
-              styles.tabButton,
-              activeTab === tab && styles.activeTabButton,
-            ]}
-            onPress={() => setActiveTab(tab)}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab && styles.activeTabText,
-              ]}
-            >
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <CustomerList
+      <TransactionList
         activeTab={activeTab}
         customers={customers}
         onCardPress={handleCardPress}
@@ -113,7 +86,7 @@ const CustomerScreen = () => {
   );
 };
 
-export default CustomerScreen;
+export default TransactionScreen;
 
 const styles = StyleSheet.create({
   container: {

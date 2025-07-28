@@ -25,14 +25,12 @@ interface Props {
 const TransactionSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   productName: Yup.string().required('Product name is required'),
-  // number: Yup.string().required('Number is required'),
   amount: Yup.number()
     .typeError('Amount must be a number')
     .required('Amount is required'),
   quantity: Yup.number()
     .typeError('Quantity must be a number')
     .required('Quantity is required'),
-  // message: Yup.string(),
 });
 
 const TransactionForm: React.FC<Props> = ({ onSave }) => (
