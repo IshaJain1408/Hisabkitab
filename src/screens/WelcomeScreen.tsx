@@ -49,30 +49,6 @@ const WelcomeScreen: React.FC = () => {
     }
   };
 
-  // const handleGoogleLogin = async () => {
-  //   try {
-  //     const userInfo = await GoogleAuthService.signIn();
-  //     console.log(userInfo, 'HomeScreen');
-  //     const idToken = userInfo?.data?.idToken;
-  //     const profile = userInfo?.data?.user;
-
-  //     if (idToken) {
-  //       await AsyncStorage.setItem('google_id_token', idToken);
-  //       const token = await GoogleAuthService.getAccessToken();
-  //       if (token) {
-  //         await AsyncStorage.setItem('access_token', token);
-  //       }
-  //       await AsyncStorage.setItem('user_photo', profile?.photo || '');
-
-  //       // setUser(userInfo);
-  //       navigation.replace('HomeScreen');
-  //     }
-  //   } catch (error: any) {
-  //     console.log('Google Sign-In Error:', error);
-  //     Alert.alert('Login Failed', error?.message || 'Something went wrong');
-  //   }
-  // };
-
   return (
     <View style={styles.container}>
       <View style={styles.logoBox}>

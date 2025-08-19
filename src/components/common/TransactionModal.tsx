@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PurchaseForm from '../forms/PurchaseForm';
 import TransactionForm from '../forms/TransactionForm';
@@ -14,7 +8,9 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   activeTab: string;
-  onSave: (data: any) => void;
+  onSave: (data: any, editRowIndex?: number) => void;
+  initialValues?: any;
+  editRowIndex?: number;
 }
 
 const TransactionModal: React.FC<Props> = ({
@@ -22,6 +18,8 @@ const TransactionModal: React.FC<Props> = ({
   onClose,
   onSave,
   activeTab,
+  initialValues,
+  editRowIndex,
 }) => {
   return (
     <Modal visible={visible} animationType="fade" transparent>
@@ -32,6 +30,7 @@ const TransactionModal: React.FC<Props> = ({
           </TouchableOpacity>
 
           <Text style={styles.title}>
+            {editRowIndex !== undefined ? 'Edit' : 'Add'}{' '}
             {activeTab === 'Purchase'
               ? 'Add Purchase'
               : activeTab === 'Sales'
@@ -42,13 +41,28 @@ const TransactionModal: React.FC<Props> = ({
           </Text>
 
           {activeTab === 'Purchase' && (
-            <PurchaseForm onSave={onSave} onClose={onClose} />
+            <PurchaseForm
+              onSave={data => onSave(data, editRowIndex)}
+              onClose={onClose}
+              initialValues={initialValues}
+              editRowIndex={editRowIndex}
+            />
           )}
           {activeTab === 'Sales' && (
-            <TransactionForm onSave={onSave} onClose={onClose} />
+            <TransactionForm
+              onSave={data => onSave(data, editRowIndex)}
+              onClose={onClose}
+              initialValues={initialValues}
+              editRowIndex={editRowIndex}
+            />
           )}
           {activeTab === 'Inventory' && (
-            <InventoryForm onSave={onSave} onClose={onClose} />
+            <InventoryForm
+              onSave={data => onSave(data, editRowIndex)}
+              onClose={onClose}
+              initialValues={initialValues}
+              editRowIndex={editRowIndex}
+            />
           )}
         </View>
       </View>

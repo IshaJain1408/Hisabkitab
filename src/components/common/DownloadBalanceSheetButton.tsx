@@ -32,9 +32,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#f7931e',
     borderRadius: 30,
-    paddingVertical: 6,
+    paddingVertical: 10,
     paddingHorizontal: 10,
-    marginBottom: 10,
     alignSelf: 'flex-end',
     elevation: 4,
     shadowColor: '#000',

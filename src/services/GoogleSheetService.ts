@@ -8,6 +8,9 @@ import { logInventoryChange } from './sheetMethods/logInventoryChange';
 import { handlePurchase } from './sheetMethods/handlePurchase';
 import { handleSale } from './sheetMethods/handleSale';
 import { getBalanceSheet } from './sheetMethods/getBalanceSheet';
+import { updateRowStatus } from './sheetMethods/deleteRow';
+import { updateRow } from './sheetMethods/updateRow';
+import { markRowAsUpdated } from './sheetMethods/markRowAsUpdated';
 
 export type InventoryActionType = 'Purchase' | 'Sale' | 'Inventory';
 
@@ -21,4 +24,8 @@ export class GoogleSheetService {
   static handlePurchase = handlePurchase;
   static handleSale = handleSale;
   static getBalanceSheet = getBalanceSheet;
+  static deleteRow = updateRowStatus;
+  static updateRow = updateRow;
+    static markRowAsUpdated = markRowAsUpdated;
+
 }

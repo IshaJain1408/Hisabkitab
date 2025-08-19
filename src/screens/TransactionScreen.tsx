@@ -8,6 +8,9 @@ import TransactionList from '../components/user/TransactionList';
 const tabs = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
 
 const TransactionScreen = () => {
+  const [editData, setEditData] = useState<any>(null);
+  const [editIndex, setEditIndex] = useState<number | undefined>(undefined);
+
   const {
     showModal,
     customers,
@@ -17,17 +20,17 @@ const TransactionScreen = () => {
     handleInventorySave,
     fetchCurrentUser,
     fetchCustomerData,
+    deleteCustomerRow,
   } = useTransactionLogic();
+
   const route = useRoute<any>();
-
   const [activeTab, setActiveTab] = useState('Purchase');
-
-  const handleCardPress = () => {};
 
   useFocusEffect(
     useCallback(() => {
       fetchCurrentUser();
       fetchCustomerData();
+
       if (
         route.params?.selectedTab &&
         tabs.includes(route.params.selectedTab)
@@ -46,14 +49,47 @@ const TransactionScreen = () => {
       case 'Inventory':
         return 'Add New Item';
       default:
-        return null;
+        return '';
     }
   };
 
   const handleAction = () => {
     if (activeTab !== 'Inventory Log') {
+      setEditData(null);
+      setEditIndex(undefined);
       setShowModal(true);
     }
+  };
+
+  const handleEdit = (rowData: string[], rowIndex: number) => {
+    let parsedData: any = {};
+    if (activeTab === 'Purchase') {
+      parsedData = {
+        productName: rowData[1] || '',
+        purchasingPrice: rowData[2] || '',
+        quantity: rowData[3] || '',
+        unit: rowData[4] || 'pcs',
+      };
+    } else if (activeTab === 'Sales') {
+      parsedData = {
+        name: rowData[3] || '',
+        productName: rowData[4] || '',
+        number: rowData[5] || '',
+        amount: rowData[6] || '',
+        quantity: rowData[7] || '',
+        message: rowData[8] || '',
+      };
+    } else if (activeTab === 'Inventory') {
+      parsedData = {
+        productName: rowData[1] || '',
+        purchasingPrice: rowData[5] || '',
+        quantity: rowData[2] || '',
+        unit: rowData[6] || 'pcs',
+      };
+    }
+    setEditData(parsedData);
+    setEditIndex(rowIndex);
+    setShowModal(true);
   };
 
   return (
@@ -61,13 +97,16 @@ const TransactionScreen = () => {
       <TransactionList
         activeTab={activeTab}
         customers={customers}
-        onCardPress={handleCardPress}
+        deleteRow={deleteCustomerRow}
+        onEdit={handleEdit}
       />
+
       {activeTab !== 'Inventory Log' && (
         <TouchableOpacity style={styles.actionButton} onPress={handleAction}>
           <Text style={styles.actionButtonText}>{getButtonText()}</Text>
         </TouchableOpacity>
       )}
+
       {showModal && (
         <TransactionModal
           visible={showModal}
@@ -80,55 +119,27 @@ const TransactionScreen = () => {
               : handleSaleSave
           }
           activeTab={activeTab}
+          initialValues={editData}
+          editRowIndex={editIndex}
         />
       )}
     </View>
   );
 };
 
-export default TransactionScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingHorizontal: 10,
+    paddingTop: 10,
   },
   sectionTitle: {
-    marginTop: 25,
     fontSize: 16,
     fontWeight: '600',
     color: '#000',
   },
-  tabContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 4,
-    justifyContent: 'flex-start',
-  },
 
-  tabButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    backgroundColor: '#F6EDE0',
-    borderRadius: 6,
-    marginRight: 1,
-    marginBottom: 8,
-  },
-
-  activeTabButton: {
-    backgroundColor: '#FFA500',
-  },
-
-  tabText: {
-    color: '#000',
-    fontWeight: '600',
-  },
-
-  activeTabText: {
-    color: '#fff',
-  },
   actionButton: {
     marginBottom: 50,
     backgroundColor: '#FFA500',
@@ -145,3 +156,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default TransactionScreen;

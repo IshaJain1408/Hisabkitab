@@ -11,15 +11,27 @@ import * as Yup from 'yup';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface Props {
-  onSave: (data: {
+  onSave: (
+    data: {
+      name: string;
+      productName: string;
+      number: string;
+      amount: string;
+      quantity: string;
+      message: string;
+    },
+    editRowIndex?: number,
+  ) => void;
+  initialValues?: {
     name: string;
     productName: string;
     number: string;
     amount: string;
     quantity: string;
     message: string;
-  }) => void;
+  };
   onClose: () => void;
+  editRowIndex?: number;
 }
 
 const TransactionSchema = Yup.object().shape({
@@ -33,83 +45,103 @@ const TransactionSchema = Yup.object().shape({
     .required('Quantity is required'),
 });
 
-const TransactionForm: React.FC<Props> = ({ onSave }) => (
-  <Formik
-    initialValues={{
-      name: '',
-      productName: '',
-      number: '',
-      amount: '',
-      quantity: '',
-      message: '',
-    }}
-    validationSchema={TransactionSchema}
-    onSubmit={(values, { resetForm }) => {
-      onSave(values);
-      resetForm();
-    }}
-  >
-    {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-      <>
-        {[
-          { name: 'name', icon: 'person-outline', placeholder: 'Name' },
-          {
-            name: 'productName',
-            icon: 'pricetag-outline',
-            placeholder: 'Product Name',
-          },
-          { name: 'number', icon: 'call-outline', placeholder: 'Number' },
-          {
-            name: 'amount',
-            icon: 'cash-outline',
-            placeholder: 'Amount',
-            keyboardType: 'numeric',
-          },
-          {
-            name: 'quantity',
-            icon: 'cube-outline',
-            placeholder: 'Quantity',
-            keyboardType: 'numeric',
-          },
-          {
-            name: 'message',
-            icon: 'chatbubble-outline',
-            placeholder: 'Message',
-          },
-        ].map(({ name, icon, placeholder, keyboardType }) => (
-          <View key={name}>
-            <View style={styles.inputContainer}>
-              <Ionicons
-                name={icon as any}
-                size={20}
-                color="#666"
-                style={styles.icon}
-              />
-              <TextInput
-                placeholder={placeholder}
-                style={styles.input}
-                keyboardType={keyboardType as any}
-                onChangeText={handleChange(name)}
-                onBlur={handleBlur(name)}
-                value={values[name as keyof typeof values]}
-              />
-            </View>
-            {touched[name as keyof typeof touched] &&
-              errors[name as keyof typeof errors] && (
-                <Text style={styles.error}>
-                  {errors[name as keyof typeof errors]}
-                </Text>
-              )}
-          </View>
-        ))}
+const TransactionForm: React.FC<Props> = ({
+  onSave,
+  onClose,
+  initialValues,
+  editRowIndex,
+}) => {
+  const defaultValues = {
+    name: '',
+    productName: '',
+    number: '',
+    amount: '',
+    quantity: '',
+    message: '',
+  };
 
-        <TouchableOpacity style={styles.button} onPress={() => handleSubmit()}>
-          <Text style={styles.buttonText}>Save</Text>
-        </TouchableOpacity>
-      </>
-    )}
-  </Formik>
-);
+  return (
+    <Formik
+      initialValues={initialValues || defaultValues}
+      validationSchema={TransactionSchema}
+      onSubmit={(values, { resetForm }) => {
+        onSave(values, editRowIndex);
+        resetForm();
+        onClose();
+      }}
+    >
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+      }) => (
+        <>
+          {[
+            { name: 'name', icon: 'person-outline', placeholder: 'Name' },
+            {
+              name: 'productName',
+              icon: 'pricetag-outline',
+              placeholder: 'Product Name',
+            },
+            { name: 'number', icon: 'call-outline', placeholder: 'Number' },
+            {
+              name: 'amount',
+              icon: 'cash-outline',
+              placeholder: 'Amount',
+              keyboardType: 'numeric',
+            },
+            {
+              name: 'quantity',
+              icon: 'cube-outline',
+              placeholder: 'Quantity',
+              keyboardType: 'numeric',
+            },
+            {
+              name: 'message',
+              icon: 'chatbubble-outline',
+              placeholder: 'Message',
+            },
+          ].map(({ name, icon, placeholder, keyboardType }) => (
+            <View key={name}>
+              <View style={styles.inputContainer}>
+                <Ionicons
+                  name={icon as any}
+                  size={20}
+                  color="#666"
+                  style={styles.icon}
+                />
+                <TextInput
+                  placeholder={placeholder}
+                  style={styles.input}
+                  keyboardType={keyboardType as any}
+                  onChangeText={handleChange(name)}
+                  onBlur={handleBlur(name)}
+                  value={values[name as keyof typeof values]}
+                />
+              </View>
+              {touched[name as keyof typeof touched] &&
+                errors[name as keyof typeof errors] && (
+                  <Text style={styles.error}>
+                    {errors[name as keyof typeof errors]}
+                  </Text>
+                )}
+            </View>
+          ))}
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleSubmit()}
+          >
+            <Text style={styles.buttonText}>Save</Text>
+          </TouchableOpacity>
+        </>
+      )}
+    </Formik>
+  );
+};
 
 export default TransactionForm;
 

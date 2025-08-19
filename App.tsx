@@ -1,12 +1,3 @@
-// import AppNavigator from './src/navigation/AppNavigator';
-
-// function App() {
-//   return <AppNavigator />;
-// }
-
-// export default App;
-// App.tsx
-
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';

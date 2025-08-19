@@ -25,13 +25,13 @@ export async function createSheet(token: string): Promise<string | null> {
 
     await Promise.all([
       setSheetHeaders(token, spreadsheetId, 'Purchase', [
-        ['Product Name', 'Purchasing Price', 'Quantity', 'Timestamp']
+  ['Product Name', 'Purchasing Price', 'Quantity', 'Unit', 'Attachment Link', 'Timestamp', 'Status','IsUpdated']
       ]),
       setSheetHeaders(token, spreadsheetId, 'Sales', [
-        ['Transaction ID', 'Timestamp', 'Customer Name', 'Product Name', 'Phone Number', 'Amount', 'Quantity', 'Message']
+        ['Transaction ID', 'Timestamp', 'Customer Name', 'Product Name', 'Phone Number', 'Amount', 'Quantity', 'Message','Status','IsUpdated']
       ]),
       setSheetHeaders(token, spreadsheetId, 'Inventory', [
-        ['Product Name', 'Current Stock', 'Last Updated']
+        ['Product Name', 'Current Stock', 'Last Updated','Status','Purchasing Price','Unit','IsUpdated']
       ]),
       setSheetHeaders(token, spreadsheetId, 'Inventory Log', [
         ['Product Name', 'Change in Stock', 'Timestamp', 'Source']
