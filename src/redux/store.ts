@@ -11,8 +11,8 @@ import {
 } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { combineReducers } from 'redux';
-import userReducer from './slices/UserSlice';
-import sheetReducer from './slices/SheetSlice';
+import userReducer from './slices/userSlice';
+import sheetReducer from './slices/sheetSlice';
 
 const persistConfig = {
   key: 'root',

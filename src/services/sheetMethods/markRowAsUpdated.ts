@@ -1,5 +1,5 @@
 
-import { axiosInstance } from "../AxiosInstance";
+import { axiosInstance } from "../axiosInstance";
 
 export async function markRowAsUpdated(
   spreadsheetId: string,

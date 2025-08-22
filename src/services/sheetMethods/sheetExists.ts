@@ -1,4 +1,4 @@
-import { SHEETS_API_BASE } from '../ApiConstants';
+import { SHEETS_API_BASE } from '../apiConstants';
 
 export async function sheetExists(spreadsheetId: string, token: string): Promise<boolean> {
   try {

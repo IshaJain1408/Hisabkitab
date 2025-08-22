@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { logInventoryChange } from "./LogInventoryChange";
+import { logInventoryChange } from "./logInventoryChange";
 import { appendData } from "./AppendData";
 import { markRowAsUpdated } from "./MarkRowAsUpdated";
 import { getSheetData } from "./GetSheetData";

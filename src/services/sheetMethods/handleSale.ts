@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
-import { logInventoryChange } from "./LogInventoryChange";
-import { axiosInstance } from "../AxiosInstance";
+import { logInventoryChange } from "./logInventoryChange";
+import { axiosInstance } from "../axiosInstance";
 import { appendData } from "./AppendData";
 import { markRowAsUpdated } from "./MarkRowAsUpdated";
 import { getSheetData } from "./GetSheetData";

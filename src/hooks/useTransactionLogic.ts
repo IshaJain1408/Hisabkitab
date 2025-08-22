@@ -7,11 +7,11 @@ import {
   setUser as setUserAction,
   setAccessToken as setAccessTokenAction,
   logout as logoutAction,
-} from '../redux/slices/UserSlice';
+} from '../redux/slices/userSlice';
 import {
   setSpreadsheetId as setSpreadsheetIdAction,
   setCustomers as setCustomersAction,
-} from '../redux/slices/SheetSlice';
+} from '../redux/slices/sheetSlice';
 
 import { GoogleAuthService } from '../services/GoogleAuthService';
 import { GoogleSheetService } from '../services/GoogleSheetService';
@@ -19,7 +19,7 @@ import { handleSale } from '../services/sheetMethods/HandleSale';
 import { handlePurchase } from '../services/sheetMethods/HandlePurchase';
 import { updateInventoryStock } from '../services/sheetMethods/UpdateInventoryStock';
 import { Alert } from 'react-native';
-import { logInventoryChange } from '../services/sheetMethods/LogInventoryChange';
+import { logInventoryChange } from '../services/sheetMethods/logInventoryChange';
 
 
 export const useTransactionLogic = () => {

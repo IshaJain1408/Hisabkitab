@@ -11,7 +11,7 @@ import {
 import Header from '../components/common/Header';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
-import { setUser } from '../redux/slices/UserSlice';
+import { setUser } from '../redux/slices/userSlice';
 import { useNavigation } from '@react-navigation/native';
 import DownloadBalanceSheetButton from '../components/common/DownloadBalanceSheetButton';
 import { useTransactionLogic } from '../hooks/UseTransactionLogic';

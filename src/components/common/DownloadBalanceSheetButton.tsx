@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { RootStackParamList } from '../../types/Types';
+import { RootStackParamList } from '../../types/types';
 
 const DownloadBalanceSheetButton: React.FC = () => {
   const navigation =
