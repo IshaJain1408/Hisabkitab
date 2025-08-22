@@ -1,9 +1,9 @@
 import { Alert } from "react-native";
-import { logInventoryChange } from "./logInventoryChange";
-import { appendData } from "./appendData";
-import { markRowAsUpdated } from "./markRowAsUpdated";
-import { getSheetData } from "./getSheetData";
-import { updateInventoryStock } from "./updateInventoryStock";
+import { logInventoryChange } from "./LogInventoryChange";
+import { appendData } from "./AppendData";
+import { markRowAsUpdated } from "./MarkRowAsUpdated";
+import { getSheetData } from "./GetSheetData";
+import { updateInventoryStock } from "./UpdateInventoryStock";
 
 export async function handlePurchase(
   spreadsheetId: string | null,

@@ -12,7 +12,7 @@ import { GoogleAuthService } from '../services/GoogleAuthService';
 // import { SignInResponse } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { setAccessToken, setUser } from '../redux/slices/userSlice';
+import { setAccessToken, setUser } from '../redux/slices/UserSlice';
 
 const { width } = Dimensions.get('window');
 

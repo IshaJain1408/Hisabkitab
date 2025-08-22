@@ -1,9 +1,9 @@
 import { Alert } from "react-native";
-import { logInventoryChange } from "./logInventoryChange";
-import { axiosInstance } from "../axiosInstance";
-import { appendData } from "./appendData";
-import { markRowAsUpdated } from "./markRowAsUpdated";
-import { getSheetData } from "./getSheetData";
+import { logInventoryChange } from "./LogInventoryChange";
+import { axiosInstance } from "../AxiosInstance";
+import { appendData } from "./AppendData";
+import { markRowAsUpdated } from "./MarkRowAsUpdated";
+import { getSheetData } from "./GetSheetData";
 
 export async function handleSale(
   spreadsheetId: string | null,

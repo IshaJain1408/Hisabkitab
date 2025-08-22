@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
-import { markRowAsUpdated } from "./markRowAsUpdated";
-import { axiosInstance } from "../axiosInstance";
+import { markRowAsUpdated } from "./MarkRowAsUpdated";
+import { axiosInstance } from "../AxiosInstance";
 import { GoogleSheetService } from "../GoogleSheetService";
 
 

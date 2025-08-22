@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import TransactionModal from '../components/common/TransactionModal';
-import { useTransactionLogic } from '../hooks/useTransactionLogic';
+import { useTransactionLogic } from '../hooks/UseTransactionLogic';
 import TransactionList from '../components/user/TransactionList';
 
 const tabs = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];

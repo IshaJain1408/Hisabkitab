@@ -2,24 +2,24 @@ import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { RootState } from '../redux/Store';
 import {
   setUser as setUserAction,
   setAccessToken as setAccessTokenAction,
   logout as logoutAction,
-} from '../redux/slices/userSlice';
+} from '../redux/slices/UserSlice';
 import {
   setSpreadsheetId as setSpreadsheetIdAction,
   setCustomers as setCustomersAction,
-} from '../redux/slices/sheetSlice';
+} from '../redux/slices/SheetSlice';
 
 import { GoogleAuthService } from '../services/GoogleAuthService';
 import { GoogleSheetService } from '../services/GoogleSheetService';
-import { handleSale } from '../services/sheetMethods/handleSale';
-import { handlePurchase } from '../services/sheetMethods/handlePurchase';
-import { updateInventoryStock } from '../services/sheetMethods/updateInventoryStock';
+import { handleSale } from '../services/sheetMethods/HandleSale';
+import { handlePurchase } from '../services/sheetMethods/HandlePurchase';
+import { updateInventoryStock } from '../services/sheetMethods/UpdateInventoryStock';
 import { Alert } from 'react-native';
-import { logInventoryChange } from '../services/sheetMethods/logInventoryChange';
+import { logInventoryChange } from '../services/sheetMethods/LogInventoryChange';
 
 
 export const useTransactionLogic = () => {

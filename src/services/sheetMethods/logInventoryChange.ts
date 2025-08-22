@@ -1,4 +1,4 @@
-import { appendData } from './appendData';
+import { appendData } from './AppendData';
 import { InventoryActionType } from '../GoogleSheetService';
 
 export async function logInventoryChange(

@@ -1,4 +1,4 @@
-import { getSheetData } from './getSheetData';
+import { getSheetData } from './GetSheetData';
 
 export async function getBalanceSheet(
   spreadsheetId: string,

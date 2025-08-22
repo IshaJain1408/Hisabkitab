@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import Header from '../components/common/Header';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
-import { setUser } from '../redux/slices/userSlice';
+import { RootState } from '../redux/Store';
+import { setUser } from '../redux/slices/UserSlice';
 import { useNavigation } from '@react-navigation/native';
 import DownloadBalanceSheetButton from '../components/common/DownloadBalanceSheetButton';
-import { useTransactionLogic } from '../hooks/useTransactionLogic';
+import { useTransactionLogic } from '../hooks/UseTransactionLogic';
 const { height: screenHeight } = Dimensions.get('window');
 
 type CardProps = {

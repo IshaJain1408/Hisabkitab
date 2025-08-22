@@ -21,5 +21,5 @@ export const requestStoragePermission = async (): Promise<boolean> => {
       return false;
     }
   }
-  return true; // iOS doesn't need storage permission
+  return true;
 };
