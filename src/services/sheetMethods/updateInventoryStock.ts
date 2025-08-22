@@ -1,70 +1,99 @@
-import { appendData } from './appendData';
-import { getSheetData } from './getSheetData';
-import { axiosInstance } from '../axiosInstance';
+import { Alert } from "react-native";
+import { markRowAsUpdated } from "./markRowAsUpdated";
+import { axiosInstance } from "../axiosInstance";
+import { GoogleSheetService } from "../GoogleSheetService";
+
 
 export async function updateInventoryStock(
-  spreadsheetId: string,
-  token: string,
-  productName: string,
-  quantityChange: number,
-  purchasingPrice?: string,
-  unit?: string
+  spreadsheetId: string | null,
+  accessToken: string,
+  data: { productName: string; purchasingPrice: string; quantity: string; unit?: string },
+  editRowIndex?: number,
+  fetchCustomerData?: () => void,
+  setShowModal?: (v: boolean) => void
 ): Promise<void> {
+  if (!spreadsheetId || !accessToken) return Alert.alert('Sheet not initialized');
+
+  const updatedAt = new Date().toLocaleString('en-IN');
+  const productName = data.productName.trim();
+  const quantity = parseInt(data.quantity, 10);
+  const unit = data.unit || 'pcs';
+
+  if (!productName || isNaN(quantity)) {
+    return Alert.alert('Invalid product name or quantity');
+  }
+
   try {
-    const inventoryData = await getSheetData(spreadsheetId, token, 'Inventory');
-    if (!inventoryData) return;
+    const response = await axiosInstance.get(
+      `/${spreadsheetId}/values/Inventory!A2:G`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    const rows: string[][] = response.data.values || [];
 
-    const name = productName.trim();
-    const index = inventoryData.findIndex(row => row[0]?.trim() === name);
-    const timestamp = new Date().toLocaleString('en-IN');
-    const isUpdated = 'FALSE';
+    let rowIndex: number | undefined;
+    let oldProductName = productName;
 
-    if (index === -1) {
-      const newQty = quantityChange < 0 ? 0 : quantityChange; 
-      await appendData(
-        spreadsheetId,
-        token,
-        'Inventory',
-        [[
-          name,
-          newQty.toString(),
-          timestamp,
-          '',
-          purchasingPrice || '',
-          unit || '',
-          isUpdated
-        ]]
+    if (editRowIndex !== undefined) {
+      rowIndex = editRowIndex - 2;
+      oldProductName = rows[rowIndex]?.[0]?.trim() || productName;
+    } else {
+      const duplicateIndex = rows.findIndex(
+        row => row[0]?.toLowerCase().trim() === productName.toLowerCase()
       );
-      return;
+      if (duplicateIndex !== -1) {
+        return Alert.alert(
+          'Duplicate Product',
+          `The product "${productName}" already exists in inventory.`
+        );
+      }
     }
 
-    const currentStock = parseInt(inventoryData[index][1] || '0', 10);
-    let newStock = currentStock + quantityChange;
+    const newRow = [[
+      productName,
+      quantity.toString(),
+      updatedAt,
+      '',
+      data.purchasingPrice,
+      unit,
+      'FALSE'
+    ]];
 
-    if (newStock < 0) newStock = 0;
+    if (rowIndex !== -1 && rowIndex !== undefined) {
+      const existingRow = rows[rowIndex];
+      const currentStock = parseInt(existingRow[1] || '0', 10);
+      let newStock = quantity;
+       if (newStock < 0) newStock = 0;
 
-    const updatedPrice = purchasingPrice || inventoryData[index][4] || '';
-    const updatedUnit = unit || inventoryData[index][5] || '';
+      const hasChanges =
+        productName !== oldProductName ||
+        newStock !== currentStock ||
+        data.purchasingPrice !== existingRow[4] ||
+        unit !== existingRow[5];
 
-    const range = `Inventory!B${index + 2}:G${index + 2}`;
-    await axiosInstance.put(
-      `/${spreadsheetId}/values/${range}?valueInputOption=USER_ENTERED`,
-      {
-        values: [[
-          newStock.toString(),
-          timestamp,
-          '',
-          updatedPrice,
-          updatedUnit,
-          isUpdated
-        ]]
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
+      if (hasChanges) {
+        await markRowAsUpdated(spreadsheetId, accessToken, 'Inventory', rowIndex + 2);
+        await GoogleSheetService.appendData(spreadsheetId, accessToken, 'Inventory', newRow);
+      }
+    } else {
+      await GoogleSheetService.appendData(spreadsheetId, accessToken, 'Inventory', newRow);
+    }
+    await GoogleSheetService.logInventoryChange(
+      spreadsheetId,
+      accessToken,
+      productName,
+      quantity,
+      'Inventory'
     );
 
+    Alert.alert('Inventory updated!');
+    setShowModal?.(false);
+    fetchCustomerData?.();
   } catch (error) {
-    console.error('Error in updateInventoryStock:', error);
+    console.error('Inventory update error:', error);
+    Alert.alert('An error occurred while updating inventory');
   }
 }
+
+
 
 
