@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { RootStackParamList } from '../types/types';
+import { RootStackParamList } from '../types/Types';
 import HomeScreen from '../screens/HomeScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

@@ -1,4 +1,4 @@
-import { axiosInstance } from '../axiosInstance';
+import { axiosInstance } from '../AxiosInstance';
 
 export async function getSheetData(
   spreadsheetId: string,

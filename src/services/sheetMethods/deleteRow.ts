@@ -1,4 +1,4 @@
-import { axiosInstance } from '../axiosInstance';
+import { axiosInstance } from '../AxiosInstance';
 
 const getStatusColumn = (sheetName: string): string => {
   switch (sheetName) {

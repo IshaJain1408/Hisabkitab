@@ -1,4 +1,4 @@
-import { axiosInstance } from '../axiosInstance';
+import { axiosInstance } from '../AxiosInstance';
 import { setSheetHeaders } from './SetSheetHeaders';
 
 export async function createSheet(token: string): Promise<string | null> {
@@ -6,7 +6,7 @@ export async function createSheet(token: string): Promise<string | null> {
     const response = await axiosInstance.post(
       `/`,
       {
-        properties: { title: `HisabKitab_Report_${Date.now()}` },
+        properties: { title: `HisabKitab_Report` },
         sheets: [
           { properties: { title: 'Purchase' } },
           { properties: { title: 'Sales' } },

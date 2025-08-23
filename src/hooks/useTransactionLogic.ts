@@ -7,11 +7,11 @@ import {
   setUser as setUserAction,
   setAccessToken as setAccessTokenAction,
   logout as logoutAction,
-} from '../redux/slices/userSlice';
+} from '../redux/slices/UserSlice';
 import {
   setSpreadsheetId as setSpreadsheetIdAction,
   setCustomers as setCustomersAction,
-} from '../redux/slices/sheetSlice';
+} from '../redux/slices/SheetSlice';
 
 import { GoogleAuthService } from '../services/GoogleAuthService';
 import { GoogleSheetService } from '../services/GoogleSheetService';

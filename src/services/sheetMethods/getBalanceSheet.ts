@@ -25,22 +25,22 @@ export async function getBalanceSheet(
   const validSales = filterValidRows(salesData);
   const validInventory = filterValidRows(inventoryData);
   const totalPurchase = validPurchase
-    .map(row => parseFloat(row[1]) * parseInt(row[2], 10) )
+    .map(row => parseFloat(row[1]) * parseInt(row[2]) )
     .filter(v => !isNaN(v))
     .reduce((sum, val) => sum + val, 0);
 
 const totalSales = validSales
   .map(row => {
     const price = parseFloat(row[5]);  
-    const qty = parseInt(row[6], 10);  
-    return !isNaN(price) && !isNaN(qty) ? price * qty : 0;
+    const qty = parseInt(row[6]);  
+    return !isNaN(price) && !isNaN(qty) ? price / qty : 0;
   })
   .reduce((sum, val) => sum + val, 0);
 
 
 const inventoryValue = validInventory
   .map(row => {
-    const stock = parseInt(row[1], 10);      
+    const stock = parseInt(row[1]);      
     const purchasePrice = parseFloat(row[4]);
     return !isNaN(stock) && !isNaN(purchasePrice) ? stock * purchasePrice : 0;
   })

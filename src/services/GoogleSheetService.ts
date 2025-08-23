@@ -8,7 +8,7 @@ import { handlePurchase } from './sheetMethods/HandlePurchase';
 import { handleSale } from './sheetMethods/HandleSale';
 import { getBalanceSheet } from './sheetMethods/GetBalanceSheet';
 import { updateRowStatus } from './sheetMethods/DeleteRow';
-import { updateRow } from './sheetMethods/updateRow';
+import { updateRow } from './sheetMethods/UpdateRow';
 import { markRowAsUpdated } from './sheetMethods/MarkRowAsUpdated';
 
 export type InventoryActionType = 'Purchase' | 'Sale' | 'Inventory';
