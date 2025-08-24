@@ -49,41 +49,37 @@ export async function handlePurchase(
       await markRowAsUpdated(spreadsheetId, accessToken, 'Purchase', editRowIndex);
 
       if (oldName === newName) {
-        // ✅ Update same product row in Inventory with new quantity + new price
+          const deltaQty = newQty - oldQty;
         await updateInventoryStock(spreadsheetId, accessToken, {
           productName: newName,
           purchasingPrice: data.purchasingPrice,
-          quantity: newQty.toString(), // final stock, not change
+          quantity: deltaQty.toString(), 
           unit: data.unit,
-        });
+        },undefined, undefined, undefined, true,false);
       } else {
-        // ✅ Reduce stock of old product
         await updateInventoryStock(spreadsheetId, accessToken, {
           productName: oldName,
           purchasingPrice: data.purchasingPrice,
-          quantity: "0", // reset to 0 if product changed
+          quantity: (-oldQty).toString(), 
           unit: data.unit,
-        });
+        }, undefined, undefined, undefined, true,false);
 
-        // ✅ Add stock to new product
         await updateInventoryStock(spreadsheetId, accessToken, {
           productName: newName,
           purchasingPrice: data.purchasingPrice,
           quantity: newQty.toString(),
           unit: data.unit,
-        });
+        }, undefined, undefined, undefined,true,false);
       }
     } else if (newQty > 0) {
-      // ✅ New Purchase → add/update Inventory
       await updateInventoryStock(spreadsheetId, accessToken, {
         productName: newName,
         purchasingPrice: data.purchasingPrice,
         quantity: newQty.toString(),
         unit: data.unit,
-      });
+      }, undefined, undefined, undefined, true,false);
     }
 
-    // Save/Update purchase row
     const success = await appendData(spreadsheetId, accessToken, 'Purchase', [rowValues]);
     if (!success) return Alert.alert('Failed to save purchase');
 

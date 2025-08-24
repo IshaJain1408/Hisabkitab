@@ -9,6 +9,7 @@ import {
 } from '../../utils/RowUtils';
 import { parseDate, formatOnlyDate } from '../../utils/DateUtils';
 import TransactionCard from './TransactionCard';
+import { InventoryActionType } from '../../services/GoogleSheetService';
 
 const TransactionList: React.FC<CustomerListProps> = ({
   customers,
@@ -78,7 +79,9 @@ const TransactionList: React.FC<CustomerListProps> = ({
               displayData={displayData}
               activeTab={activeTab}
               onEdit={onEdit}
-              deleteRow={deleteRow}
+              deleteRow={(sheetName: string, index: number) => {
+                deleteRow(sheetName as InventoryActionType, index);
+              }}
               originalIndex={originalIndex}
             />
           </View>

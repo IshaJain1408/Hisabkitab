@@ -24,6 +24,7 @@ const TransactionCard: React.FC<Props> = ({
 }) => {
   const { productName, displayValue, timestamp, isAdded, statusLabel } =
     displayData;
+  console.log('rowData[7] =>', rowData[8], 'Full rowData:', rowData);
 
   return (
     <View style={styles.transactionCard}>
@@ -51,7 +52,8 @@ const TransactionCard: React.FC<Props> = ({
         <Text style={styles.amountText}>{displayValue}</Text>
       </View>
 
-      {activeTab !== 'Inventory Log' && (
+      {(activeTab === 'Inventory' && rowData[8] === 'TRUE') ||
+      (activeTab !== 'Inventory' && activeTab !== 'Inventory Log') ? (
         <>
           <TouchableOpacity
             style={{ marginLeft: 10 }}
@@ -74,7 +76,7 @@ const TransactionCard: React.FC<Props> = ({
                   {
                     text: 'Delete',
                     style: 'destructive',
-                    onPress: () => deleteRow(activeTab, originalIndex + 1),
+                    onPress: () => deleteRow(activeTab, originalIndex + 2),
                   },
                 ],
               )
@@ -83,7 +85,7 @@ const TransactionCard: React.FC<Props> = ({
             <Ionicons name="trash-outline" size={20} color="red" />
           </TouchableOpacity>
         </>
-      )}
+      ) : null}
     </View>
   );
 };

@@ -16,6 +16,6 @@ export interface SaleData {
 
 export interface InventoryData {
   productName: string;
-  sellingPrice: string;
+  purchasingPrice: string;
   quantity: string;
 }

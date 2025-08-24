@@ -32,11 +32,11 @@ const TransactionModal: React.FC<Props> = ({
           <Text style={styles.title}>
             {editRowIndex !== undefined ? 'Edit' : 'Add'}{' '}
             {activeTab === 'Purchase'
-              ? 'Add Purchase'
+              ? 'Purchase'
               : activeTab === 'Sales'
-              ? 'Add Sale'
+              ? 'Sale'
               : activeTab === 'Inventory'
-              ? 'Add Inventory'
+              ? 'Inventory'
               : 'Transaction'}
           </Text>
 

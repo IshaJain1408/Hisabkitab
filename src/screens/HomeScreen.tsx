@@ -29,11 +29,9 @@ const HomeScreen = () => {
   const navigation = useNavigation<any>();
   const user = useSelector((state: RootState) => state?.user);
   const { handleLogout } = useTransactionLogic();
-  console.log(user?.user?.user?.name, 'user');
 
   const handleCardPress = (tab: string) => {
     navigation.push('TransactionScreen', { selectedTab: tab });
-    console.log(user, ' dispatch(setUser(user));');
     dispatch(setUser(user));
   };
 

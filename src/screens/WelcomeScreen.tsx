@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleAuthService } from '../services/GoogleAuthService';
-// import { SignInResponse } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setUser } from '../redux/slices/UserSlice';
@@ -17,15 +16,12 @@ import { setAccessToken, setUser } from '../redux/slices/UserSlice';
 const { width } = Dimensions.get('window');
 
 const WelcomeScreen: React.FC = () => {
-  // const [user, setUser] = useState<SignInResponse | null>(null);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
 
   const handleGoogleLogin = async () => {
     try {
       const userInfo = await GoogleAuthService.signIn();
-      console.log(userInfo, 'HomeScreen');
-
       const idToken = userInfo?.data?.idToken;
       const profile = userInfo?.data?.user;
 

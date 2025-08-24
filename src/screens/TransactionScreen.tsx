@@ -47,7 +47,7 @@ const TransactionScreen = () => {
       case 'Sales':
         return 'Add Sale';
       case 'Inventory':
-        return 'Add New Item';
+        return 'Add Inventory';
       default:
         return '';
     }

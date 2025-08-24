@@ -14,26 +14,33 @@ import {
 } from '../redux/slices/SheetSlice';
 
 import { GoogleAuthService } from '../services/GoogleAuthService';
-import { GoogleSheetService } from '../services/GoogleSheetService';
+import { GoogleSheetService, InventoryActionType } from '../services/GoogleSheetService';
 import { handleSale } from '../services/sheetMethods/HandleSale';
 import { handlePurchase } from '../services/sheetMethods/HandlePurchase';
 import { updateInventoryStock } from '../services/sheetMethods/UpdateInventoryStock';
-import { Alert } from 'react-native';
-import { logInventoryChange } from '../services/sheetMethods/logInventoryChange';
+import { deleteRow } from '../services/sheetMethods/DeleteRow';
+import NetInfo from "@react-native-community/netinfo";
+
 
 
 export const useTransactionLogic = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
   const { user, accessToken } = useSelector((state: RootState) => state.user);
   const { spreadsheetId, customers } = useSelector((state: RootState) => state.sheet);
-
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isConnected, setIsConnected] = useState<boolean | null>(null);
 
-  const handleGoogleLogin = useCallback(async () => {
+   useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+    });
+    return () => unsubscribe();
+  }, []);
+
+const handleGoogleLogin = useCallback(async () => {
     if (loading) return;
     setLoading(true);
     try {
@@ -68,26 +75,35 @@ export const useTransactionLogic = () => {
     dispatch(setAccessTokenAction(token));
   }, [dispatch]);
 
-  const fetchCustomerData = useCallback(async () => {
+ const fetchCustomerData = useCallback(async () => {
     try {
-      const token = await AsyncStorage.getItem('access_token');
-      if (!token || !spreadsheetId) return;
-
-      const sheetNames = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
-      const allData: string[][] = [];
-
-      for (const sheetName of sheetNames) {
-        const sheetData = await GoogleSheetService.getSheetData(spreadsheetId, token, sheetName);
-        if (sheetData?.length) {
-          allData.push(...sheetData.map(row => [sheetName, ...row]));
-        }
+      if (!spreadsheetId) return;
+      const cached = await AsyncStorage.getItem("userSheetCache");
+      if (cached) {
+        dispatch(setCustomersAction(JSON.parse(cached)));
       }
 
-      dispatch(setCustomersAction(allData));
+      if (isConnected) {
+        const token = await AsyncStorage.getItem('access_token');
+        if (!token) return;
+
+        const sheetNames = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
+        const allData: string[][] = [];
+
+        for (const sheetName of sheetNames) {
+          const sheetData = await GoogleSheetService.getSheetData(spreadsheetId, token, sheetName);
+          if (sheetData?.length) {
+            allData.push(...sheetData.map(row => [sheetName, ...row]));
+          }
+        }
+        dispatch(setCustomersAction(allData));
+        await AsyncStorage.setItem("userSheetCache", JSON.stringify(allData));
+      }
+
     } catch (error) {
       console.error('Error fetching customer data:', error);
     }
-  }, [spreadsheetId, dispatch]);
+  }, [spreadsheetId, dispatch, isConnected]);
 
   const fetchCurrentUser = useCallback(async () => {
     try {
@@ -107,7 +123,7 @@ export const useTransactionLogic = () => {
   const handleLogout = async () => {
     try {
       await GoogleAuthService.signOut();
-      await AsyncStorage.multiRemove(['google_id_token', 'access_token', 'spreadsheetId']);
+      await AsyncStorage.multiRemove(['google_id_token', 'access_token']);
       dispatch(logoutAction());
 
       navigation.reset({ index: 0, routes: [{ name: 'WelcomeScreen' as never }] });
@@ -131,61 +147,21 @@ export const useTransactionLogic = () => {
     editRowIndex?: number
   ) => updateInventoryStock(spreadsheetId, accessToken, data, editRowIndex, fetchCustomerData, setShowModal);
 
- const deleteCustomerRow = async (sheetName: string, rowIndex: number) => {
-  if (!spreadsheetId || !accessToken) return Alert.alert('Sheet not initialized');
+const deleteCustomerRow = (sheetName: InventoryActionType, rowIndex: number) => {
+  return deleteRow(spreadsheetId, accessToken, sheetName, rowIndex, fetchCustomerData);
+  };
 
-  try {
-    const sheetData = await GoogleSheetService.getSheetData(spreadsheetId, accessToken, sheetName);
-    if (!sheetData || !sheetData[rowIndex - 2]) return Alert.alert('Row not found');
-
-    const row = sheetData[rowIndex - 2];
-    const productName = row[0]?.trim();
-    let quantity = 0;
-
-    if (sheetName === 'Sales') {
-      quantity = Number(row[6]) || 0;
-    } else if (sheetName === 'Purchase') {
-      quantity = Number(row[2]) || 0;
-    } else if (sheetName === 'Inventory') {
-      quantity = Number(row[1]) || 0;
-    }
-
-    if (quantity > 0) {
-      if (sheetName === 'Purchase' || sheetName === 'Inventory') {
-        await updateInventoryStock(spreadsheetId, accessToken, {
-          productName,
-          purchasingPrice: '0', 
-          quantity: (-quantity).toString(),
-          unit: 'pcs'
-        });
-        await logInventoryChange(spreadsheetId, accessToken, productName, -quantity, 'Inventory');
-      } else if (sheetName === 'Sales') {
-        await updateInventoryStock(spreadsheetId, accessToken, {
-          productName,
-          purchasingPrice: '0',
-          quantity: quantity.toString(),
-          unit: 'pcs'
-        });
-        await logInventoryChange(spreadsheetId, accessToken, productName, quantity, 'Sale');
+  useEffect(() => {
+    const loadCachedData = async () => {
+      const cached = await AsyncStorage.getItem("userSheetCache");
+      if (cached) {
+        dispatch(setCustomersAction(JSON.parse(cached)));
       }
-    }
-
-    const success = await GoogleSheetService.deleteRow(spreadsheetId, accessToken, sheetName, rowIndex);
-    if (success) {
-      Alert.alert('Row deleted successfully!');
-      fetchCustomerData();
-    } else {
-      Alert.alert('Failed to delete row');
-    }
-  } catch (error) {
-    console.error('Error deleting row:', error);
-    Alert.alert('Failed to delete row');
-  }
-};
-
-
-  useEffect(() => { initializeSheetData(); }, [initializeSheetData]);
-
+    };
+    loadCachedData();
+    initializeSheetData();
+  }, [initializeSheetData, dispatch]);
+  
   return {
     user,
     customers,

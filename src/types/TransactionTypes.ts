@@ -1,7 +1,9 @@
+import { InventoryActionType } from "../services/GoogleSheetService";
+
 export interface CustomerListProps {
   customers: string[][];
   activeTab: string;
-  deleteRow: (sheetName: string, rowIndex: number) => void;
+  deleteRow: (sheetName: InventoryActionType, rowIndex: number) => Promise<void>;
   onEdit: (rowData: string[], rowIndex: number) => void;
 }
 

@@ -1,5 +1,15 @@
 import { axiosInstance } from "../AxiosInstance";
 
+function getColumnLetter(col: number): string {
+  let letter = "";
+  while (col > 0) {
+    const mod = (col - 1) % 26;
+    letter = String.fromCharCode(65 + mod) + letter;
+    col = Math.floor((col - mod) / 26);
+  }
+  return letter;
+}
+
 export async function updateRow(
   spreadsheetId: string,
   token: string,
@@ -8,18 +18,21 @@ export async function updateRow(
   rowData: any[]
 ) {
   try {
-    const lastCol = String.fromCharCode('A'.charCodeAt(0) + rowData.length - 1);
-    const range = `${sheetName}!A${rowIndex}:${lastCol}${rowIndex}`;
+    const lastCol = getColumnLetter(rowData.length);
+    const safeSheetName = sheetName.includes(" ") ? `'${sheetName}'` : sheetName;
+    const range = `${safeSheetName}!A${rowIndex}:${lastCol}${rowIndex}`;
+    console.log("Updating Google Sheet range:", range);
+
     const body = { values: [rowData] };
 
-    await axiosInstance.put(
-      `/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`,
-      body,
-      { headers: { Authorization: `Bearer ${token}` } }
+    const response = await axiosInstance.put(
+  `/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`,
+  body,
+  { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    console.log(`Row ${rowIndex} updated in ${sheetName}.`);
+    return response.data;
   } catch (error) {
-    console.error('Error updating row:', error);
+    console.error("Error updating row:", error);
   }
 }

@@ -19,12 +19,9 @@ export async function handleSale(
   try {
     const productName = data.productName.trim();
     const newQty = parseInt(data.quantity, 10);
+    const inventoryRows = await getSheetData(spreadsheetId, accessToken, 'Inventory');
+    if (!inventoryRows) return Alert.alert('Failed to fetch inventory');
 
-    const inventoryRes = await axiosInstance.get(
-      `/${spreadsheetId}/values/Inventory!A2:G`,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    );
-    const inventoryRows: string[][] = inventoryRes.data.values || [];
     const rowIndex = inventoryRows.findIndex(
       row => row[0]?.toLowerCase().trim() === productName.toLowerCase() && (row[6] || '').toLowerCase() === 'false'
     );
@@ -35,9 +32,10 @@ export async function handleSale(
     if (editRowIndex !== undefined) {
       const saleData = await getSheetData(spreadsheetId, accessToken, 'Sales');
       if (!saleData) return Alert.alert('Failed to load sale data for editing');
-      const oldRow = saleData[editRowIndex];
-      oldQty = parseInt(oldRow?.[6] || '0', 10);
-      await markRowAsUpdated(spreadsheetId, accessToken, 'Sales', editRowIndex);
+  const dataIndex = editRowIndex - 2; 
+  const oldRow = saleData[dataIndex];
+
+  oldQty = parseInt(oldRow?.[6] || '0', 10);      await markRowAsUpdated(spreadsheetId, accessToken, 'Sales', editRowIndex);
     }
 
     const currentStock = parseInt(inventoryRows[rowIndex][1] || '0', 10);
@@ -46,12 +44,11 @@ export async function handleSale(
       return Alert.alert('Insufficient Stock', `Only ${currentStock} units available in stock for "${productName}".`);
     }
 
-    const salesRes = await axiosInstance.get(
-      `/${spreadsheetId}/values/Sales!A2:A`,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    );
-    const existingRows = salesRes.data.values || [];
-    const transactionId = (existingRows.length + 1).toString();
+    console.log("Updating inventory row:", rowIndex + 2);
+console.log("Old stock:", currentStock, "OldQty:", oldQty, "NewQty:", newQty, "Adjusted:", adjustedStock);
+
+    const salesData = (await getSheetData(spreadsheetId, accessToken, "Sales")) || [];
+    const transactionId = (salesData.length + 1).toString();
     const timestamp = new Date().toLocaleString('en-IN');
 
     const values = [[
@@ -69,7 +66,7 @@ export async function handleSale(
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
 
-    await logInventoryChange(spreadsheetId, accessToken, productName, newQty - oldQty, 'Sale');
+    await logInventoryChange(spreadsheetId, accessToken, productName, newQty - oldQty, 'Sales');
 
     Alert.alert('Success', editRowIndex !== undefined ? 'Sale updated!' : 'Sale saved!');
     setShowModal?.(false);

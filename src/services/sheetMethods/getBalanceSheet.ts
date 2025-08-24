@@ -33,7 +33,7 @@ const totalSales = validSales
   .map(row => {
     const price = parseFloat(row[5]);  
     const qty = parseInt(row[6]);  
-    return !isNaN(price) && !isNaN(qty) ? price / qty : 0;
+    return !isNaN(price) && !isNaN(qty) ? price * qty : 0;
   })
   .reduce((sum, val) => sum + val, 0);
 
@@ -49,13 +49,5 @@ const inventoryValue = validInventory
 
   const cogs = totalPurchase - inventoryValue;
   const profit = totalSales - cogs;
-
-  console.log(' Balance Sheet:', {
-    totalPurchase,
-    totalSales,
-    inventoryValue,
-    profit,
-  });
-
   return { totalPurchase, totalSales, inventoryValue, profit };
 }

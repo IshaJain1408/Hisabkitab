@@ -7,11 +7,11 @@ import { logInventoryChange } from './sheetMethods/logInventoryChange';
 import { handlePurchase } from './sheetMethods/HandlePurchase';
 import { handleSale } from './sheetMethods/HandleSale';
 import { getBalanceSheet } from './sheetMethods/GetBalanceSheet';
-import { updateRowStatus } from './sheetMethods/DeleteRow';
+import { deleteRow } from './sheetMethods/DeleteRow';
 import { updateRow } from './sheetMethods/UpdateRow';
 import { markRowAsUpdated } from './sheetMethods/MarkRowAsUpdated';
 
-export type InventoryActionType = 'Purchase' | 'Sale' | 'Inventory';
+export type InventoryActionType = 'Purchase' | 'Sales' | 'Inventory';
 
 export class GoogleSheetService {
   static sheetExists = sheetExists;
@@ -23,7 +23,7 @@ export class GoogleSheetService {
   static handlePurchase = handlePurchase;
   static handleSale = handleSale;
   static getBalanceSheet = getBalanceSheet;
-  static deleteRow = updateRowStatus;
+  static deleteRow = deleteRow;
   static updateRow = updateRow;
   static markRowAsUpdated = markRowAsUpdated;
 
