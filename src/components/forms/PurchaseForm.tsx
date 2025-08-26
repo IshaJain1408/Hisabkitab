@@ -1,14 +1,9 @@
 import React from 'react';
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import InputField from '../common/InputField';
+import PickerField from '../common/PickerField';
+import SubmitButton from '../common/SubmitButton';
 
 interface Props {
   onSave: (
@@ -17,7 +12,7 @@ interface Props {
       purchasingPrice: string;
       quantity: string;
       unit: string;
-      file?: { uri: string; name: string; type: string };
+      file?: any;
     },
     editRowIndex?: number,
   ) => void;
@@ -27,7 +22,7 @@ interface Props {
     purchasingPrice: string;
     quantity: string;
     unit: string;
-    file?: { uri: string; name: string; type: string };
+    file?: any;
   };
   editRowIndex?: number;
 }
@@ -63,7 +58,6 @@ const PurchaseForm: React.FC<Props> = ({
       enableReinitialize
       validationSchema={FormSchema}
       onSubmit={(values, { resetForm }) => {
-        console.log(values, 'values');
         onSave(values, editRowIndex);
         resetForm();
         onClose();
@@ -79,64 +73,60 @@ const PurchaseForm: React.FC<Props> = ({
         setFieldValue,
       }) => (
         <>
-          <TextInput
+          <InputField
+            icon="pricetag-outline"
             placeholder="Product Name"
-            style={styles.input}
+            value={values.productName}
             onChangeText={handleChange('productName')}
             onBlur={handleBlur('productName')}
-            value={values.productName}
+            error={
+              touched.productName && errors.productName
+                ? errors.productName
+                : undefined
+            }
           />
-          {touched.productName && errors.productName && (
-            <Text style={styles.error}>{errors.productName}</Text>
-          )}
-
-          <TextInput
+          <InputField
+            icon="cash-outline"
             placeholder="Purchasing Price"
-            style={styles.input}
-            keyboardType="numeric"
+            value={values.purchasingPrice}
             onChangeText={handleChange('purchasingPrice')}
             onBlur={handleBlur('purchasingPrice')}
-            value={values.purchasingPrice}
-          />
-          {touched.purchasingPrice && errors.purchasingPrice && (
-            <Text style={styles.error}>{errors.purchasingPrice}</Text>
-          )}
-
-          <TextInput
-            placeholder="Quantity"
-            style={styles.input}
+            error={
+              touched.purchasingPrice && errors.purchasingPrice
+                ? errors.purchasingPrice
+                : undefined
+            }
             keyboardType="numeric"
+          />
+          <InputField
+            icon="cube-outline"
+            placeholder="Quantity"
+            value={values.quantity}
             onChangeText={handleChange('quantity')}
             onBlur={handleBlur('quantity')}
-            value={values.quantity}
+            error={
+              touched.quantity && errors.quantity ? errors.quantity : undefined
+            }
+            keyboardType="numeric"
           />
-          {touched.quantity && errors.quantity && (
-            <Text style={styles.error}>{errors.quantity}</Text>
-          )}
 
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={values.unit}
-              onValueChange={itemValue => setFieldValue('unit', itemValue)}
-            >
-              <Picker.Item label="pcs" value="pcs" />
-              <Picker.Item label="kg" value="kg" />
-              <Picker.Item label="litre" value="litre" />
-              <Picker.Item label="box" value="box" />
-            </Picker>
-          </View>
-          {touched.unit && errors.unit && (
-            <Text style={styles.error}>{errors.unit}</Text>
-          )}
+          <PickerField
+            icon="layers-outline"
+            selectedValue={values.unit}
+            onValueChange={value => setFieldValue('unit', value)}
+            options={[
+              { label: 'pcs', value: 'pcs' },
+              { label: 'kg', value: 'kg' },
+              { label: 'litre', value: 'litre' },
+              { label: 'box', value: 'box' },
+            ]}
+            error={touched.unit && errors.unit ? errors.unit : undefined}
+          />
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleSubmit()}
-          >
-            <Text style={styles.buttonText}>
-              {editRowIndex !== undefined ? 'Update' : 'Save'}
-            </Text>
-          </TouchableOpacity>
+          <SubmitButton
+            title={editRowIndex !== undefined ? 'Update' : 'Save'}
+            onPress={handleSubmit}
+          />
         </>
       )}
     </Formik>
@@ -144,34 +134,3 @@ const PurchaseForm: React.FC<Props> = ({
 };
 
 export default PurchaseForm;
-
-const styles = StyleSheet.create({
-  input: {
-    backgroundColor: '#f4f4f4',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: '#FFA500',
-    padding: 12,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginVertical: 6,
-  },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  error: {
-    color: 'red',
-    fontSize: 12,
-    marginBottom: 5,
-  },
-});

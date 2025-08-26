@@ -1,41 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/Store';
 import { getSheetData } from '../../services/sheetMethods/GetSheetData';
-import { Picker } from '@react-native-picker/picker';
+import InputField from '../common/InputField';
+import PickerField from '../common/PickerField';
+import SubmitButton from '../common/SubmitButton';
+import { TransactionFormValues } from '../../types/Index';
+import ProductInfo from '../common/ProductInfo';
 
 interface Props {
-  onSave: (
-    data: {
-      name: string;
-      productName: string;
-      number: string;
-      amount: string;
-      quantity: string;
-      unit: string;
-      message: string;
-    },
-    editRowIndex?: number,
-  ) => void;
-  initialValues?: {
-    name: string;
-    productName: string;
-    number: string;
-    amount: string;
-    quantity: string;
-    unit: string;
-    message: string;
-  };
+  onSave: (data: TransactionFormValues, editRowIndex?: number) => void;
+  initialValues?: TransactionFormValues;
   onClose: () => void;
   editRowIndex?: number;
 }
@@ -44,8 +22,8 @@ const TransactionSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   productName: Yup.string().required('Product name is required'),
   amount: Yup.number()
-    .typeError('Amount must be a number')
-    .required('Amount is required'),
+    .typeError('Selling Price must be a number')
+    .required('Selling Price is required'),
   quantity: Yup.number()
     .typeError('Quantity must be a number')
     .required('Quantity is required'),
@@ -57,17 +35,8 @@ const TransactionForm: React.FC<Props> = ({
   initialValues,
   editRowIndex,
 }) => {
-  const defaultValues = {
-    name: '',
-    productName: '',
-    number: '',
-    amount: '',
-    quantity: '',
-    unit: '',
-    message: '',
-  };
   const [inventory, setInventory] = useState<
-    { productName: string; unit: string }[]
+    { productName: string; unit: string; quantity: string }[]
   >([]);
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const spreadsheetId = useSelector(
@@ -77,32 +46,48 @@ const TransactionForm: React.FC<Props> = ({
   useEffect(() => {
     const fetchInventory = async () => {
       if (!accessToken || !spreadsheetId) return;
-      try {
-        const data = await getSheetData(
-          spreadsheetId,
-          accessToken,
-          'Inventory',
-        );
-        if (data) {
-          const formatted = data
-            .filter(row => row.length && row[0] && row[6] === 'FALSE')
-            .map(row => ({
-              productName: row[0],
-              unit: row[5],
-              quantity: row[1] || '',
-            }));
-          setInventory(formatted);
-        }
-      } catch (error) {
-        console.error('Fetch inventory error:', error);
+      const data = await getSheetData(spreadsheetId, accessToken, 'Inventory');
+      if (data) {
+        const formatted = data
+          .filter(row => row.length && row[0] && row[6] === 'FALSE')
+          .map(row => ({
+            productName: row[0],
+            unit: row[5],
+            quantity: row[1] || '',
+          }));
+        setInventory(formatted);
       }
     };
     fetchInventory();
   }, [accessToken, spreadsheetId]);
 
+  const computedInitialValues = React.useMemo(() => {
+    const defaultValues: TransactionFormValues = {
+      name: '',
+      productName: '',
+      number: '',
+      amount: '',
+      quantity: '',
+      unit: '',
+      message: '',
+      availableQuantity: '',
+    };
+    if (!initialValues) return defaultValues;
+    const selected = inventory.find(
+      item => item.productName === initialValues.productName,
+    );
+    return {
+      ...defaultValues,
+      ...initialValues,
+      unit: selected?.unit || initialValues.unit,
+      availableQuantity: selected?.quantity || initialValues.availableQuantity,
+    };
+  }, [initialValues, inventory]);
+
   return (
     <Formik
-      initialValues={initialValues || defaultValues}
+      initialValues={computedInitialValues}
+      enableReinitialize
       validationSchema={TransactionSchema}
       onSubmit={(values, { resetForm }) => {
         onSave(values, editRowIndex);
@@ -119,170 +104,89 @@ const TransactionForm: React.FC<Props> = ({
         touched,
         setFieldValue,
       }) => (
-        <>
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="person-outline"
-              size={20}
-              color="#666"
-              style={styles.icon}
-            />
-            <TextInput
-              placeholder="Name"
-              style={styles.input}
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
-              value={values.name}
-            />
-          </View>
-          {touched.name && errors.name && (
-            <Text style={styles.error}>{errors.name}</Text>
-          )}
+        <View>
+          <InputField
+            icon="person-outline"
+            placeholder="Name"
+            value={values.name}
+            onChangeText={handleChange('name')}
+            onBlur={handleBlur('name')}
+            error={touched.name && errors.name ? errors.name : undefined}
+          />
 
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="pricetag-outline"
-              size={20}
-              color="#666"
-              style={styles.icon}
-            />
-            <Picker
-              style={{ flex: 1 }}
-              selectedValue={values.productName}
-              onValueChange={value => {
-                setFieldValue('productName', value);
-                const selected = inventory.find(
-                  item => item.productName === value,
-                );
-                if (selected) setFieldValue('unit', selected.unit);
-                else setFieldValue('unit', '');
-              }}
-            >
-              <Picker.Item label="Select a product" value="" />
-              {inventory.map(item => (
-                <Picker.Item
-                  key={item.productName}
-                  label={item.productName}
-                  value={item.productName}
-                />
-              ))}
-            </Picker>
-          </View>
-          {touched.productName && errors.productName && (
-            <Text style={styles.error}>{errors.productName}</Text>
-          )}
+          <PickerField
+            icon="pricetag-outline"
+            selectedValue={values.productName}
+            onValueChange={value => {
+              setFieldValue('productName', value);
+              const selected = inventory.find(
+                item => item.productName === value,
+              );
+              setFieldValue('unit', selected?.unit || '');
+              setFieldValue('availableQuantity', selected?.quantity || '');
+            }}
+            options={[
+              { label: 'Select a product', value: '' },
+              ...inventory.map(item => ({
+                label: item.productName,
+                value: item.productName,
+              })),
+            ]}
+            error={
+              touched.productName && errors.productName
+                ? errors.productName
+                : undefined
+            }
+          />
 
-          {values.unit ? (
-            <Text style={styles.unitText}>
-              Unit: per {values.unit} {values.quantity || 0}
-            </Text>
-          ) : null}
+          <ProductInfo
+            unit={values.unit}
+            availableQuantity={values.availableQuantity}
+          />
 
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="call-outline"
-              size={20}
-              color="#666"
-              style={styles.icon}
-            />
-            <TextInput
-              placeholder="Number"
-              style={styles.input}
-              onChangeText={handleChange('number')}
-              onBlur={handleBlur('number')}
-              value={values.number}
-            />
-          </View>
+          <InputField
+            icon="call-outline"
+            placeholder="Number"
+            value={values.number}
+            onChangeText={handleChange('number')}
+            onBlur={handleBlur('number')}
+          />
+          <InputField
+            icon="cash-outline"
+            placeholder="Selling Price"
+            value={values.amount}
+            onChangeText={handleChange('amount')}
+            onBlur={handleBlur('amount')}
+            error={touched.amount && errors.amount ? errors.amount : undefined}
+            keyboardType="numeric"
+          />
+          <InputField
+            icon="cube-outline"
+            placeholder="Quantity"
+            value={values.quantity}
+            onChangeText={handleChange('quantity')}
+            onBlur={handleBlur('quantity')}
+            error={
+              touched.quantity && errors.quantity ? errors.quantity : undefined
+            }
+            keyboardType="numeric"
+          />
+          <InputField
+            icon="chatbubble-outline"
+            placeholder="Message"
+            value={values.message}
+            onChangeText={handleChange('message')}
+            onBlur={handleBlur('message')}
+          />
 
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="cash-outline"
-              size={20}
-              color="#666"
-              style={styles.icon}
-            />
-            <TextInput
-              placeholder="Amount"
-              style={styles.input}
-              keyboardType="numeric"
-              onChangeText={handleChange('amount')}
-              onBlur={handleBlur('amount')}
-              value={values.amount}
-            />
-          </View>
-          {touched.amount && errors.amount && (
-            <Text style={styles.error}>{errors.amount}</Text>
-          )}
-
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="cube-outline"
-              size={20}
-              color="#666"
-              style={styles.icon}
-            />
-            <TextInput
-              placeholder="Quantity"
-              style={styles.input}
-              keyboardType="numeric"
-              onChangeText={handleChange('quantity')}
-              onBlur={handleBlur('quantity')}
-              value={values.quantity}
-            />
-          </View>
-          {touched.quantity && errors.quantity && (
-            <Text style={styles.error}>{errors.quantity}</Text>
-          )}
-
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="chatbubble-outline"
-              size={20}
-              color="#666"
-              style={styles.icon}
-            />
-            <TextInput
-              placeholder="Message"
-              style={styles.input}
-              onChangeText={handleChange('message')}
-              onBlur={handleBlur('message')}
-              value={values.message}
-            />
-          </View>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleSubmit()}
-          >
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-        </>
+          <SubmitButton
+            title={editRowIndex !== undefined ? 'Update' : 'Save'}
+            onPress={handleSubmit}
+          />
+        </View>
       )}
     </Formik>
   );
 };
 
 export default TransactionForm;
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f4f4f4',
-    borderRadius: 10,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  icon: { marginRight: 8 },
-  input: { flex: 1, paddingVertical: 10 },
-  button: {
-    backgroundColor: '#FFA500',
-    padding: 12,
-    borderRadius: 30,
-    marginTop: 10,
-  },
-  unitText: { marginVertical: 5, fontSize: 14, color: '#333' },
-  buttonText: { color: 'white', textAlign: 'center', fontWeight: 'bold' },
-  cancelText: { color: 'red', marginTop: 15, textAlign: 'center' },
-  error: { color: 'red', fontSize: 12, marginBottom: 5, marginLeft: 5 },
-});

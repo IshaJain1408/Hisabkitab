@@ -44,8 +44,6 @@ export async function handleSale(
       return Alert.alert('Insufficient Stock', `Only ${currentStock} units available in stock for "${productName}".`);
     }
 
-    console.log("Updating inventory row:", rowIndex + 2);
-console.log("Old stock:", currentStock, "OldQty:", oldQty, "NewQty:", newQty, "Adjusted:", adjustedStock);
 
     const salesData = (await getSheetData(spreadsheetId, accessToken, "Sales")) || [];
     const transactionId = (salesData.length + 1).toString();
@@ -54,7 +52,7 @@ console.log("Old stock:", currentStock, "OldQty:", oldQty, "NewQty:", newQty, "A
     const values = [[
       transactionId, timestamp, data.name, productName,
       data.number, data.amount, newQty.toString(),
-      data.message, '', 'FALSE'
+      data.message, 'FALSE', 'FALSE'
     ]];
     const success = await appendData(spreadsheetId, accessToken, 'Sales', values);
     if (!success) return Alert.alert('Save Failed', 'Failed to save sale.');

@@ -24,12 +24,25 @@ const TransactionCard: React.FC<Props> = ({
 }) => {
   const { productName, displayValue, timestamp, isAdded, statusLabel } =
     displayData;
-  console.log('rowData[7] =>', rowData[8], 'Full rowData:', rowData);
+
+  const getQuantity = () => {
+    switch (activeTab) {
+      case 'Purchase':
+        return rowData[3];
+      case 'Sales':
+        return rowData[7];
+      default:
+        return null;
+    }
+  };
+
+  const quantity = getQuantity();
 
   return (
     <View style={styles.transactionCard}>
       <View style={{ flex: 1, marginLeft: 10 }}>
         <Text style={styles.productName}>{productName || 'No Name'}</Text>
+        {quantity && <Text style={styles.quantityText}>Qty: {quantity}</Text>}
 
         {activeTab === 'Inventory Log' && (
           <View style={styles.status}>
@@ -121,6 +134,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     minWidth: 80,
     alignItems: 'center',
+  },
+  quantityText: {
+    fontSize: 14,
+    color: '#444',
+    marginTop: 4,
+    fontWeight: '500',
   },
   amountText: { color: '#F78C1F', fontWeight: '700', fontSize: 15 },
   added: { color: '#CC8FEC' },

@@ -30,7 +30,7 @@ export async function handlePurchase(
     data.unit,
     'No Attachment',
     timestamp,
-    '',
+    'FALSE',
     'FALSE',
   ];
 

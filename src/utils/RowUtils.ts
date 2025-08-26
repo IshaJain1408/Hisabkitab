@@ -12,7 +12,7 @@ export const shouldIncludeRow = (row: string[], activeTab: string): boolean => {
   const status = row[statusIndex]?.toLowerCase() || '';
   const isUpdated = (row[updatedIndex] || '').toString().toLowerCase() === 'true';
 
-  return status !== 'deleted' && !isUpdated;
+  return status !== 'true' && !isUpdated;
 };
 
 export const getRowDisplayData = (row: string[], activeTab: string): RowDisplayData => {

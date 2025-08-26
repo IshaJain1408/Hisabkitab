@@ -92,7 +92,7 @@ if (inventoryRowIndex === -1) {
     existingRow[0],
     newStock.toString(),
     existingRow[2] || new Date().toLocaleString("en-IN"),
-    existingRow[3] || "",
+    existingRow[3] || "FALSE",
     existingRow[4] || '0',
     existingRow[5] || "pcs",
     existingRow[6] || "FALSE",
@@ -106,7 +106,7 @@ if (inventoryRowIndex === -1) {
     const statusColIndex = statusColumnIndex[sheetName];
     const updatedRow = [...row];
     while (updatedRow.length <= statusColIndex) updatedRow.push('');
-    updatedRow[statusColIndex] = 'deleted';
+    updatedRow[statusColIndex] = 'TRUE';
 
     const updated = await updateRow(spreadsheetId, accessToken, sheetName, rowIndex, updatedRow);
 
