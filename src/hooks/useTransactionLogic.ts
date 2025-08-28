@@ -49,6 +49,7 @@ const handleGoogleLogin = useCallback(async () => {
 
       if (idToken) await AsyncStorage.setItem('google_id_token', idToken);
       if (serverAuthCode) await AsyncStorage.setItem('access_token', serverAuthCode);
+      console.log(serverAuthCode,idToken,"serverAuthCode")
 
       dispatch(setUserAction(userInfo));
     } catch (error) {
@@ -58,22 +59,28 @@ const handleGoogleLogin = useCallback(async () => {
     }
   }, [loading, dispatch]);
 
-  const initializeSheetData = useCallback(async () => {
-    const token = await AsyncStorage.getItem('access_token');
-    const savedSheetId = await AsyncStorage.getItem('spreadsheetId');
-    if (!token) return;
+const initializeSheetData = useCallback(async () => {
+  let token = await GoogleAuthService.getAccessToken();
+  if (!token) {
+    await GoogleAuthService.signIn();
+    token = await GoogleAuthService.getAccessToken();
+  }
 
-    let finalSheetId = savedSheetId;
-    const sheetExists = savedSheetId && await GoogleSheetService.sheetExists(savedSheetId, token);
+  if (!token) return;
 
-    if (!sheetExists) {
-      finalSheetId = await GoogleSheetService.createSheet(token);
-      if (finalSheetId) await AsyncStorage.setItem('spreadsheetId', finalSheetId);
-    }
+  const savedSheetId = await AsyncStorage.getItem('spreadsheetId');
+  let finalSheetId = savedSheetId;
 
-    if (finalSheetId) dispatch(setSpreadsheetIdAction(finalSheetId));
-    dispatch(setAccessTokenAction(token));
-  }, [dispatch]);
+  const sheetExists = savedSheetId && await GoogleSheetService.sheetExists(savedSheetId, token);
+  if (!sheetExists) {
+    finalSheetId = await GoogleSheetService.createSheet(token);
+    if (finalSheetId) await AsyncStorage.setItem('spreadsheetId', finalSheetId);
+  }
+
+  if (finalSheetId) dispatch(setSpreadsheetIdAction(finalSheetId));
+  dispatch(setAccessTokenAction(token));
+}, [dispatch]);
+
 
  const fetchCustomerData = useCallback(async () => {
     try {

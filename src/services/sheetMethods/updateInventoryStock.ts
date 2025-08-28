@@ -37,13 +37,24 @@ export async function updateInventoryStock(
     const inventoryData = await getSheetData(spreadsheetId, accessToken, "Inventory");
     if (!inventoryData) return Alert.alert("Failed to load inventory data");
     const normalize = (str: string) => str?.toLowerCase().trim();
+    let rowIndex = -1;
+    let existingRow: string[] | undefined = undefined;
+    if (editRowIndex) {
+      rowIndex = inventoryData.findIndex((row, idx) => idx + 2 === editRowIndex);
+      existingRow = rowIndex !== -1 ? inventoryData[rowIndex] : undefined;
+    }
+    if (!existingRow) {
+      rowIndex = inventoryData.findIndex(row => normalize(row[0] || "") === normalize(productName));
+      existingRow = rowIndex !== -1 ? inventoryData[rowIndex] : undefined;
+    }
 
-    const rowIndex = inventoryData.findIndex(
-      row => normalize(row[0] || "") === normalize(productName)
-    );
+    // const rowIndex = inventoryData.findIndex(
+    //   row => normalize(row[0] || "") === normalize(productName)
+    // );
+    
 
-    const existingRow = rowIndex !== -1 ? inventoryData[rowIndex] : undefined;
-    console.log(existingRow,rowIndex,"rowIndex")
+    // const existingRow = rowIndex !== -1 ? inventoryData[rowIndex] : undefined;
+    // console.log(existingRow,rowIndex,"rowIndex")
 
     if (existingRow) {
       const currentStock = parseInt(existingRow[1] || "0", 10);
@@ -56,7 +67,7 @@ export async function updateInventoryStock(
           updatedAt,                      
           existingRow[3] || "",          
           data.purchasingPrice,         
-          existingRow[5] || unit,      
+        unit,      
           existingRow[6] || "FALSE",     
           "FALSE"                         
         ]);
@@ -120,3 +131,4 @@ export async function updateInventoryStock(
     Alert.alert("An error occurred while updating inventory");
   }
 }
+
