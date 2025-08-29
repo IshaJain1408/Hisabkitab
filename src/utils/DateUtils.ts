@@ -30,3 +30,5 @@ export const formatOnlyTime = (input: string): string => {
     return 'Invalid Time';
   }
 };
+
+export const getTimestamp = (): string => new Date().toLocaleString('en-IN');
