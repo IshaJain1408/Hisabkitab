@@ -12,16 +12,13 @@ import {
   setSpreadsheetId as setSpreadsheetIdAction,
   setCustomers as setCustomersAction,
 } from '../redux/slices/SheetSlice';
-
-import { GoogleAuthService } from '../services/GoogleAuthService';
-import { GoogleSheetService, InventoryActionType } from '../services/GoogleSheetService';
-import { handleSale } from '../services/sheetMethods/HandleSale';
-import { handlePurchase } from '../services/sheetMethods/HandlePurchase';
-import { updateInventoryStock } from '../services/sheetMethods/UpdateInventoryStock';
-import { deleteRow } from '../services/sheetMethods/DeleteRow';
+import { GoogleAuthService } from '../services/spreadsheet/google/GoogleAuthService';
+import { GoogleSheetService, InventoryActionType } from '../services/spreadsheet/google/GoogleSheetService';
+import { handleSale } from '../services/spreadsheet/methods/HandleSale';
+import { handlePurchase } from '../services/spreadsheet/methods/HandlePurchase';
+import { updateInventoryStock } from '../services/spreadsheet/methods/UpdateInventoryStock';
+import { deleteRow } from '../services/spreadsheet/methods/DeleteRow';
 import NetInfo from "@react-native-community/netinfo";
-
-
 
 export const useTransactionLogic = () => {
   const dispatch = useDispatch();
@@ -49,7 +46,6 @@ const handleGoogleLogin = useCallback(async () => {
 
       if (idToken) await AsyncStorage.setItem('google_id_token', idToken);
       if (serverAuthCode) await AsyncStorage.setItem('access_token', serverAuthCode);
-      console.log(serverAuthCode,idToken,"serverAuthCode")
 
       dispatch(setUserAction(userInfo));
     } catch (error) {
@@ -67,10 +63,8 @@ const initializeSheetData = useCallback(async () => {
   }
 
   if (!token) return;
-
   const savedSheetId = await AsyncStorage.getItem('spreadsheetId');
   let finalSheetId = savedSheetId;
-
   const sheetExists = savedSheetId && await GoogleSheetService.sheetExists(savedSheetId, token);
   if (!sheetExists) {
     finalSheetId = await GoogleSheetService.createSheet(token);
@@ -93,10 +87,8 @@ const initializeSheetData = useCallback(async () => {
       if (isConnected) {
         const token = await AsyncStorage.getItem('access_token');
         if (!token) return;
-
         const sheetNames = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
         const allData: string[][] = [];
-
         for (const sheetName of sheetNames) {
           const sheetData = await GoogleSheetService.getSheetData(spreadsheetId, token, sheetName);
           if (sheetData?.length) {
@@ -132,7 +124,6 @@ const initializeSheetData = useCallback(async () => {
       await GoogleAuthService.signOut();
       await AsyncStorage.multiRemove(['google_id_token', 'access_token']);
       dispatch(logoutAction());
-
       navigation.reset({ index: 0, routes: [{ name: 'WelcomeScreen' as never }] });
     } catch (error) {
       console.error('Logout Error:', error);

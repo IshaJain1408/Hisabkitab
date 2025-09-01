@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GoogleAuthService } from '../services/GoogleAuthService';
+import { GoogleAuthService } from '../services/spreadsheet/google/GoogleAuthService';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setUser } from '../redux/slices/UserSlice';

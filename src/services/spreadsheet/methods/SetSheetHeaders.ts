@@ -1,4 +1,4 @@
-import { axiosInstance } from '../AxiosInstance';
+import { axiosInstance } from '../../config/AxiosInstance';
 
 export async function setSheetHeaders(
   token: string,

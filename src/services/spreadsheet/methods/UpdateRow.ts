@@ -1,4 +1,4 @@
-import { axiosInstance } from "../AxiosInstance";
+import { axiosInstance } from "../../config/AxiosInstance";
 
 function getColumnLetter(col: number): string {
   let letter = "";

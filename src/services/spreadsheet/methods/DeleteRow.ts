@@ -1,9 +1,10 @@
-import { Alert } from "react-native";
 import { getSheetData } from "./GetSheetData";
-import { normalizeString, parseIntSafe } from "../../utils/SheetUtils";
+import { normalizeString, parseIntSafe } from "../../../utils/SheetUtils";
 import { logInventoryChange } from "./logInventoryChange";
 import { updateRow } from "./UpdateRow";
-import { handleError } from "../../utils/ErrorHandler";
+import { handleError } from "../../../utils/ErrorHandler";
+import { showErrorPopup } from "../../../components/popup/ErrorPopup";
+import { showSuccessPopup } from "../../../components/popup/SuccessPopup";
 
 type InventoryActionType = "Purchase" | "Sales" | "Inventory";
 
@@ -34,7 +35,10 @@ async function adjustInventoryOnDelete(
 ) {
   const inventoryDataRaw = await getSheetData(spreadsheetId, accessToken, "Inventory");
   if (!inventoryDataRaw) {
-    Alert.alert("Inventory data not found, cannot update");
+  showErrorPopup({ 
+    title: "Error", 
+    message: "Inventory data not found, cannot update" 
+  });
     return;
   }
 
@@ -44,16 +48,22 @@ async function adjustInventoryOnDelete(
   );
 
   if (invIndex === -1) {
-    return Alert.alert(`Product "${productName}" not found in Inventory`);
+    return  showErrorPopup({ 
+    title: "Product Not Found", 
+    message: `Product "${productName}" not found in Inventory` 
+  });
   }
 
   const existingRow = inventoryData[invIndex];
   const currentStock = parseIntSafe(existingRow[1]);
 
-  const newStock =
-    sheetName === "Sales"
-      ? currentStock + quantity 
-      : currentStock - quantity; 
+   const newStock = sheetName === "Purchase"
+    ? currentStock - quantity
+    : sheetName === "Sales"
+    ? currentStock + quantity
+    : currentStock;
+
+
 
   const sheetRowIndex = inventoryDataRaw.findIndex(r => r === existingRow) + 2;
 
@@ -90,10 +100,6 @@ async function markRowAsDeleted(
   while (updatedRow.length <= statusColIndex) updatedRow.push("");
   updatedRow[statusColIndex] = "TRUE";
 
-  if (sheetName === "Purchase") {
-    updatedRow[2] = "0"; 
-  }
-
   return await updateRow(spreadsheetId, accessToken, sheetName, rowIndex, updatedRow);
 }
 
@@ -105,7 +111,7 @@ export async function deleteRow(
   fetchCustomerData?: () => Promise<void>
 ) {
   if (!spreadsheetId || !accessToken) {
-    return Alert.alert("Sheet not initialized");
+    return showErrorPopup({ title: "Initialization Error", message: "Sheet not initialized" });
   }
 
   try {
@@ -113,7 +119,7 @@ export async function deleteRow(
     const arrayIndex = rowIndex - 2;
 
     if (!sheetData || arrayIndex < 0 || arrayIndex >= sheetData.length) {
-      return Alert.alert("Row not found");
+      return showErrorPopup({ title: "Row Not Found", message: "The row you are trying to delete does not exist." });
     }
 
     const row = sheetData[arrayIndex];
@@ -126,10 +132,10 @@ export async function deleteRow(
     const updated = await markRowAsDeleted(spreadsheetId, accessToken, sheetName, rowIndex, row);
 
     if (updated) {
-      Alert.alert("Row marked as deleted successfully!");
+      showSuccessPopup("Row marked as deleted successfully!");
       if (fetchCustomerData) await fetchCustomerData();
     } else {
-      Alert.alert("Failed to mark row as deleted");
+      showErrorPopup({ title: "Failed", message: "Failed to mark row as deleted" });
     }
   } catch (error) {
     handleError("Delete row", error, "Failed to mark row as deleted");

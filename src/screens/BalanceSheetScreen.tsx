@@ -5,15 +5,14 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
   ScrollView,
   Dimensions,
 } from 'react-native';
-import { GoogleSheetService } from '../services/GoogleSheetService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { generatePDF } from '../services/PDFGenerator';
 import Pdf from 'react-native-pdf';
-import { getBalanceSheetHTML } from '../services/BalanceSheetHTML';
+import { GoogleSheetService } from '../services/spreadsheet/google/GoogleSheetService';
+import { generatePDF } from '../services/documents/PDFGenerator';
+import { getBalanceSheetHTML } from '../services/documents/BalanceSheetHTML';
 
 const BalanceSheetScreen = () => {
   const [balanceData, setBalanceData] = useState<{
@@ -22,7 +21,6 @@ const BalanceSheetScreen = () => {
     inventoryValue: number;
     profit: number;
   } | null>(null);
-  const [loading, setLoading] = useState(true);
   const [pdfPath, setPdfPath] = useState<string | null>(null);
 
   const fetchBalance = async () => {
@@ -32,7 +30,6 @@ const BalanceSheetScreen = () => {
 
       if (!token || !spreadsheetId) {
         Alert.alert('Error', 'Google Sheet not initialized.');
-        setLoading(false);
         return;
       }
 
@@ -43,8 +40,6 @@ const BalanceSheetScreen = () => {
       setBalanceData(data);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch balance sheet.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -60,15 +55,6 @@ const BalanceSheetScreen = () => {
   useEffect(() => {
     fetchBalance();
   }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#007b83" />
-        <Text style={styles.loadingText}>Loading Balance Sheet...</Text>
-      </View>
-    );
-  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

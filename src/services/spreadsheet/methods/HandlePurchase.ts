@@ -1,32 +1,26 @@
-import { Alert } from "react-native";
-import { getTimestamp } from "../../utils/DateUtils";
 import { getSheetData } from "./GetSheetData";
 import { updateInventoryStock } from "./UpdateInventoryStock";
 import { appendData } from "./AppendData";
 import { logInventoryChange } from "./logInventoryChange";
-import { handleError } from "../../utils/ErrorHandler";
+import { handleError } from "../../../utils/ErrorHandler";
 import { markRowAsUpdated } from "./MarkRowAsUpdated";
+import { showErrorPopup } from "../../../components/popup/ErrorPopup";
+import { showSuccessPopup } from "../../../components/popup/SuccessPopup";
+import { getTimestamp } from "../../../utils/DateUtils";
+import { PurchaseData } from "../../../types/Index";
 
-
-interface PurchasePayload {
-  productName: string;
-  purchasingPrice: string;
-  quantity: string;
-  unit: string;
-  file?: { uri: string; name: string; type: string };
-}
 
 export async function handlePurchase(
   spreadsheetId: string | null,
   accessToken: string,
-  data: PurchasePayload,
+  data: PurchaseData,
   editRowIndex?: number,
   fetchCustomerData?: () => void,
   setShowModal?: (v: boolean) => void
 ) {
-  if (!spreadsheetId || !accessToken) return Alert.alert("Sheet not initialized");
+  if (!spreadsheetId || !accessToken) return showErrorPopup({ title: 'Error', message: 'Sheet not initialized' });
 
-  const timestamp = getTimestamp();
+const timestamp = `'${getTimestamp()}`;
   const newQty = parseInt(data.quantity || "0", 10);
 
   const rowValues = [
@@ -42,7 +36,7 @@ export async function handlePurchase(
 
   try {
     const purchaseData = await getSheetData(spreadsheetId, accessToken, "Purchase");
-    if (!purchaseData) return Alert.alert("Failed to load purchase data");
+    if (!purchaseData) return showErrorPopup({ title: 'Error', message: 'Failed to load purchase data' });
 
     const newName = (data.productName || "").trim();
 
@@ -67,12 +61,12 @@ export async function handlePurchase(
     }
 
     const success = await appendData(spreadsheetId, accessToken, "Purchase", [rowValues]);
-    if (!success) return Alert.alert("Failed to save purchase");
+    if (!success) return showErrorPopup({ title: 'Error', message: 'Failed to save purchase' });
 
     const oldQty = await getOldPurchaseQtyIfEditing(purchaseData, editRowIndex);
     await logInventoryChange(spreadsheetId, accessToken, newName, editRowIndex !== undefined ? newQty - oldQty : newQty, "Purchase");
 
-    Alert.alert(editRowIndex !== undefined ? "Purchase updated!" : "Purchase saved!");
+    showSuccessPopup(editRowIndex !== undefined ? 'Purchase updated!' : 'Purchase saved!');
     setShowModal?.(false);
     fetchCustomerData?.();
   } catch (error) {
@@ -93,7 +87,7 @@ async function processPurchaseEdit(
   editRowIndex: number,
   newName: string,
   newQty: number,
-  data: PurchasePayload
+  data: PurchaseData
 ) {
   const oldRow = purchaseData[editRowIndex - 2];
   const oldQty = oldRow ? parseInt(oldRow[2] || "0", 10) : 0;

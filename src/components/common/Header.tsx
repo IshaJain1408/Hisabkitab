@@ -50,11 +50,6 @@ const Header: React.FC<HeaderProps> = ({ userName, handleLogout }) => {
     fetchUserPhoto();
   }, []);
 
-  // const onLogoutPress = () => {
-  //   setDrawerVisible(false);
-  //   handleLogout();
-  // };
-
   const onMenuItemPress = (tab: string) => {
     setDrawerVisible(false);
     navigation.navigate('TransactionScreen', { selectedTab: tab });

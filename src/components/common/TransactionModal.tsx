@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PurchaseForm from '../forms/PurchaseForm';
-import TransactionForm from '../forms/TransactionForm';
+import SaleForm from '../forms/SaleForm';
 import InventoryForm from '../forms/InventoryForm';
 interface Props {
   visible: boolean;
@@ -49,7 +49,7 @@ const TransactionModal: React.FC<Props> = ({
             />
           )}
           {activeTab === 'Sales' && (
-            <TransactionForm
+            <SaleForm
               onSave={data => onSave(data, editRowIndex)}
               onClose={onClose}
               initialValues={initialValues}

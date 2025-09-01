@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/Store';
-import { getSheetData } from '../../services/sheetMethods/GetSheetData';
+import { getSheetData } from '../../services/spreadsheet/methods/GetSheetData';
 import InputField from '../common/InputField';
 import PickerField from '../common/PickerField';
 import SubmitButton from '../common/SubmitButton';
@@ -26,10 +26,11 @@ const TransactionSchema = Yup.object().shape({
     .required('Selling Price is required'),
   quantity: Yup.number()
     .typeError('Quantity must be a number')
-    .required('Quantity is required'),
+    .required('Quantity is required')
+    .moreThan(0, 'Quantity must be greater than 0'),
 });
 
-const TransactionForm: React.FC<Props> = ({
+const SaleForm: React.FC<Props> = ({
   onSave,
   onClose,
   initialValues,
@@ -49,7 +50,17 @@ const TransactionForm: React.FC<Props> = ({
       const data = await getSheetData(spreadsheetId, accessToken, 'Inventory');
       if (data) {
         const formatted = data
-          .filter(row => row.length && row[0] && row[6] === 'FALSE')
+          .filter(row => {
+            const qty = parseInt(row[1], 10);
+            return (
+              row.length &&
+              row[0] &&
+              !isNaN(qty) &&
+              qty > 0 &&
+              row[3] === 'FALSE' &&
+              row[6] === 'FALSE'
+            );
+          })
           .map(row => ({
             productName: row[0],
             unit: row[5],
@@ -189,4 +200,4 @@ const TransactionForm: React.FC<Props> = ({
   );
 };
 
-export default TransactionForm;
+export default SaleForm;

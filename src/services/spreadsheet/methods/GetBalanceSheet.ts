@@ -1,4 +1,4 @@
-import { getSheetData } from './GetSheetData';
+import { getSheetData } from "./GetSheetData";
 
 export async function getBalanceSheet(
   spreadsheetId: string,
@@ -14,20 +14,30 @@ export async function getBalanceSheet(
     getSheetData(spreadsheetId, token, 'Sales'),
     getSheetData(spreadsheetId, token, 'Inventory'),
   ]);
-  const filterValidRows = (data: string[][] | null | undefined): string[][] =>
-    (data ?? []).filter(
-      row =>
-        row[row.length - 1] !== 'TRUE' && 
-        row[row.length - 2]?.toLowerCase() !== 'delete' 
-    );
+    
+    const filterValidRowsByHeaders = (data: string[][] | null | undefined): string[][] => {
+      if (!data || data.length < 2) return []; 
+      const headerRow = data[0];
+      const rows = data.slice(1); 
 
-  const validPurchase = filterValidRows(purchaseData);
-  const validSales = filterValidRows(salesData);
-  const validInventory = filterValidRows(inventoryData);
-  const totalPurchase = validPurchase
-    .map(row => parseFloat(row[1]) * parseInt(row[2]) )
-    .filter(v => !isNaN(v))
-    .reduce((sum, val) => sum + val, 0);
+      const idxIsDeleted = headerRow.indexOf('IsDeleted');
+      const idxIsUpdated = headerRow.indexOf('IsUpdated');
+
+      return rows.filter(row => {
+        const deleted = idxIsDeleted >= 0 ? row[idxIsDeleted] !== 'TRUE' : true;
+        const updated = idxIsUpdated >= 0 ? row[idxIsUpdated] !== 'TRUE' : true;
+        return deleted && updated;
+      });
+    };
+
+    const validPurchase = filterValidRowsByHeaders(purchaseData);
+    const validSales = filterValidRowsByHeaders(salesData);
+    const validInventory = filterValidRowsByHeaders(inventoryData);
+    const totalPurchase = validPurchase
+        .map(row => parseFloat(row[1]) * parseInt(row[2]))
+        .filter(v => !isNaN(v))
+        .reduce((sum, val) => sum + val, 0);
+
 
 const totalSales = validSales
   .map(row => {

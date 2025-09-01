@@ -30,7 +30,8 @@ const InventorySchema = Yup.object().shape({
   purchasingPrice: Yup.number().typeError('Must be a number'),
   quantity: Yup.number()
     .required('Quantity is required')
-    .typeError('Must be a number'),
+    .typeError('Must be a number')
+    .moreThan(0, 'Quantity must be greater than 0'),
 });
 
 const InventoryForm: React.FC<Props> = ({

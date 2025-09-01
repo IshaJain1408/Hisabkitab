@@ -1,4 +1,4 @@
-import { InventoryActionType } from "../services/GoogleSheetService";
+import { InventoryActionType } from "../services/spreadsheet/google/GoogleSheetService";
 
 export interface CustomerListProps {
   customers: string[][];

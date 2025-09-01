@@ -1,4 +1,4 @@
-import { axiosInstance } from '../AxiosInstance';
+import { axiosInstance } from '../../config/AxiosInstance';
 import { setSheetHeaders } from './SetSheetHeaders';
 
 export async function createSheet(token: string): Promise<string | null> {

@@ -1,53 +1,46 @@
-import { Alert } from "react-native";
-import { normalizeString, parseIntSafe } from "../../utils/SheetUtils";
+import { normalizeString, parseIntSafe } from "../../../utils/SheetUtils";
 import { getSheetData } from "./GetSheetData";
-import { getTimestamp } from "../../utils/DateUtils";
+import { getTimestamp } from "../../../utils/DateUtils";
 import { appendData } from "./AppendData";
-import { axiosInstance } from "../AxiosInstance";
+import { axiosInstance } from "../../config/AxiosInstance";
 import { logInventoryChange } from "./logInventoryChange";
-import { handleError } from "../../utils/ErrorHandler";
+import { handleError } from "../../../utils/ErrorHandler";
 import { markRowAsUpdated } from "./MarkRowAsUpdated";
+import { showErrorPopup } from "../../../components/popup/ErrorPopup";
+import { showSuccessPopup } from "../../../components/popup/SuccessPopup";
+import { SaleData } from "../../../types/Index";
 
-
-interface SalePayload {
-  name: string;
-  productName: string;
-  number: string;
-  amount: string;
-  quantity: string;
-  message: string;
-}
 
 export async function handleSale(
   spreadsheetId: string | null,
   accessToken: string,
-  data: SalePayload,
+  data: SaleData,
   editRowIndex?: number,
   fetchCustomerData?: () => void,
   setShowModal?: (v: boolean) => void
 ) {
   if (!spreadsheetId || !accessToken) {
-    return Alert.alert("Initialization Error", "Spreadsheet ID or access token is missing.");
+    return  showErrorPopup({ title: "Initialization Error", message: "Spreadsheet ID or access token is missing." });
   }
 
   try {
     const productName = (data.productName || "").trim();
     const newQty = parseIntSafe(data.quantity);
     const inventoryRows = await getSheetData(spreadsheetId, accessToken, "Inventory");
-    if (!inventoryRows) return Alert.alert("Failed to fetch inventory");
+    if (!inventoryRows) return showErrorPopup({ title: "Error", message: "Failed to fetch inventory." });
 
     const rowIndex = inventoryRows.findIndex(
       row => normalizeString(row[0]) === normalizeString(productName) && (row[6] || "").toLowerCase() === "false"
     );
 
     if (rowIndex === -1) {
-      return Alert.alert("Product Not Found", `The product "${productName}" does not exist in inventory.`);
+      return showErrorPopup({ title: "Product Not Found", message: `The product "${productName}" does not exist in inventory.` });
     }
 
     let oldQty = 0;
     if (editRowIndex !== undefined) {
       const saleData = await getSheetData(spreadsheetId, accessToken, "Sales");
-      if (!saleData) return Alert.alert("Failed to load sale data for editing");
+      if (!saleData) return showErrorPopup({ title: "Error", message: "Failed to load sale data for editing." });
       const dataIndex = editRowIndex - 2;
       const oldRow = saleData[dataIndex];
       oldQty = oldRow ? parseInt(oldRow[6] || "0", 10) : 0;
@@ -58,12 +51,15 @@ export async function handleSale(
     const adjustedStock = currentStock + oldQty - newQty;
 
     if (adjustedStock < 0) {
-      return Alert.alert("Insufficient Stock", `Only ${currentStock} units available in stock for "${productName}".`);
+      return showErrorPopup({
+        title: "Insufficient Stock",
+        message: `Only ${currentStock} units available in stock for "${productName}".`
+      });
     }
 
     const salesData = (await getSheetData(spreadsheetId, accessToken, "Sales")) || [];
     const transactionId = (salesData.length + 1).toString();
-    const timestamp = getTimestamp();
+    const timestamp = `'${getTimestamp()}`;
 
     const values = [
       [
@@ -81,9 +77,10 @@ export async function handleSale(
     ];
 
     const success = await appendData(spreadsheetId, accessToken, "Sales", values);
-    if (!success) return Alert.alert("Save Failed", "Failed to save sale.");
+    if (!success) return showErrorPopup({ title: "Save Failed", message: "Failed to save sale." });
 
-    const updatedAt = getTimestamp();
+
+    const updatedAt =  `'${getTimestamp()}`;
     await axiosInstance.put(
       `/${spreadsheetId}/values/Inventory!B${rowIndex + 2}:C${rowIndex + 2}?valueInputOption=USER_ENTERED`,
       { values: [[adjustedStock.toString(), updatedAt]] },
@@ -92,7 +89,7 @@ export async function handleSale(
 
     await logInventoryChange(spreadsheetId, accessToken, productName, newQty - oldQty, "Sales");
 
-    Alert.alert("Success", editRowIndex !== undefined ? "Sale updated!" : "Sale saved!");
+    showSuccessPopup(editRowIndex !== undefined ? "Sale updated!" : "Sale saved!");
     setShowModal?.(false);
     fetchCustomerData?.();
   } catch (error) {

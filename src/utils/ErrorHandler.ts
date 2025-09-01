@@ -1,6 +1,9 @@
-import { Alert } from "react-native";
+import { showErrorPopup } from "../components/popup/ErrorPopup";
 
 export function handleError(context: string, error: unknown, userMessage = "An error occurred") {
   console.error(`${context} - error:`, error);
-  Alert.alert(context, userMessage);
+   showErrorPopup({
+    title: context,
+    message: userMessage,
+  });
 }

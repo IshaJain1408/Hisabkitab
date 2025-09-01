@@ -1,5 +1,6 @@
 import { appendData } from './AppendData';
-import { InventoryActionType } from '../GoogleSheetService';
+import { InventoryActionType } from '../google/GoogleSheetService';
+import { getTimestamp } from '../../../utils/DateUtils';
 
 export async function logInventoryChange(
   spreadsheetId: string,
@@ -9,7 +10,7 @@ export async function logInventoryChange(
   source: InventoryActionType,
   timestamp?: string   
 ): Promise<void> {
-  const finalTimestamp = timestamp || new Date().toLocaleString('en-IN'); 
+  const finalTimestamp = timestamp || `'${getTimestamp()}`; 
   const sign = quantityChange > 0 ? '+' : '';
   const values = [[productName, `${sign}${quantityChange}`, finalTimestamp, source]];
 

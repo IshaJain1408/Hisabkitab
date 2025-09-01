@@ -9,7 +9,7 @@ import {
 } from '../../utils/RowUtils';
 import { parseDate, formatOnlyDate } from '../../utils/DateUtils';
 import TransactionCard from './TransactionCard';
-import { InventoryActionType } from '../../services/GoogleSheetService';
+import { InventoryActionType } from '../../services/spreadsheet/google/GoogleSheetService';
 
 const TransactionList: React.FC<CustomerListProps> = ({
   customers,
@@ -37,7 +37,7 @@ const TransactionList: React.FC<CustomerListProps> = ({
     (a, b) => parseDate(b.row[3]).getTime() - parseDate(a.row[3]).getTime(),
   );
 
-  if (sortedData.length === 0) {
+  if (sortedData.length <= 0) {
     return (
       <View style={styles.imageContainer}>
         <Image
@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     color: '#1A1A1A',
   },
-  imageContainer: { alignItems: 'center', marginTop: 180 },
-  image: { width: 200, height: 200 },
+  imageContainer: { alignItems: 'center', marginTop: 100 },
+  image: { width: 300, height: 300 },
   statusContainer: {
     backgroundColor: '#FFF2E0',
     alignSelf: 'center',
