@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
+import styles from './FooterButtons.styles';
 
 interface FooterButtonsProps {
   onMoneyInPress: () => void;
@@ -21,23 +22,3 @@ const FooterButtons: React.FC<FooterButtonsProps> = ({
 );
 
 export default FooterButtons;
-
-const styles = StyleSheet.create({
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 15,
-    marginBottom: 20,
-  },
-  footerButton: {
-    backgroundColor: '#FFA500',
-    borderRadius: 30,
-    paddingHorizontal: 32,
-    paddingVertical: 14,
-  },
-  footerButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 15,
-  },
-});

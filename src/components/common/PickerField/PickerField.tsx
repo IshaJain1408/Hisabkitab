@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
+import styles from './PickerField.styles';
 import { Picker } from '@react-native-picker/picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -31,7 +32,7 @@ const PickerField: React.FC<Props> = ({
       <Picker
         selectedValue={selectedValue}
         onValueChange={onValueChange}
-        style={{ flex: 1 }}
+        style={styles.pickerInput}
       >
         {options.map(opt => (
           <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
@@ -43,16 +44,3 @@ const PickerField: React.FC<Props> = ({
 };
 
 export default PickerField;
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 10,
-    marginVertical: 6,
-    paddingHorizontal: 10,
-    backgroundColor: '#f4f4f4',
-  },
-  icon: { marginRight: 8 },
-  error: { color: 'red', fontSize: 12, marginLeft: 5 },
-});

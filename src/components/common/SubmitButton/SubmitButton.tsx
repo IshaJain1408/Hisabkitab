@@ -1,5 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
+import styles from './SubmitButton.styles';
 
 interface Props {
   title: string;
@@ -13,13 +14,3 @@ const SubmitButton: React.FC<Props> = ({ title, onPress }) => (
 );
 
 export default SubmitButton;
-
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: '#FFA500',
-    padding: 12,
-    borderRadius: 30,
-    marginTop: 10,
-  },
-  buttonText: { color: 'white', textAlign: 'center', fontWeight: 'bold' },
-});

@@ -3,15 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
-import {
-  setUser as setUserAction,
-  setAccessToken as setAccessTokenAction,
-  logout as logoutAction,
+import {setUser as setUserAction, setAccessToken as setAccessTokenAction, logout as logoutAction,
 } from '../redux/slices/UserSlice';
-import {
-  setSpreadsheetId as setSpreadsheetIdAction,
-  setCustomers as setCustomersAction,
-} from '../redux/slices/SheetSlice';
+import {setSpreadsheetId as setSpreadsheetIdAction, setCustomers as setCustomersAction} from '../redux/slices/SheetSlice';
 import { GoogleAuthService } from '../services/spreadsheet/google/GoogleAuthService';
 import { GoogleSheetService, InventoryActionType } from '../services/spreadsheet/google/GoogleSheetService';
 import { handleSale } from '../services/spreadsheet/methods/HandleSale';

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, TextInput, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Text } from 'react-native';
+import styles from './InputField.styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface Props {
@@ -40,17 +41,3 @@ const InputField: React.FC<Props> = ({
 );
 
 export default InputField;
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f4f4f4',
-    borderRadius: 10,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  icon: { marginRight: 8 },
-  input: { flex: 1, paddingVertical: 16 },
-  error: { color: 'red', fontSize: 12, marginBottom: 5, marginLeft: 5 },
-});

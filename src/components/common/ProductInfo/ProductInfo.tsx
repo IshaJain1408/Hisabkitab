@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
+import styles from './ProductInfo.styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface Props {
@@ -21,7 +22,7 @@ const ProductInfo: React.FC<Props> = ({ unit, availableQuantity }) => {
         name="checkmark-circle-outline"
         size={18}
         color="#CC8FEC"
-        style={{ marginLeft: 10 }}
+        style={styles.statusIcon}
       />
       <Text style={styles.text}>
         Available:{' '}
@@ -32,22 +33,3 @@ const ProductInfo: React.FC<Props> = ({ unit, availableQuantity }) => {
 };
 
 export default ProductInfo;
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-    padding: 4,
-    borderRadius: 8,
-  },
-  text: {
-    fontSize: 14,
-    color: '#333',
-    marginLeft: 5,
-  },
-  highlight: {
-    fontWeight: 'bold',
-    color: '#FFA500',
-  },
-});

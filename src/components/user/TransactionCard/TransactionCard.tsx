@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import styles from './TransactionCard.styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { formatOnlyTime } from '../../utils/DateUtils';
-import { RowDisplayData } from '../../types/TransactionTypes';
+import { formatOnlyTime } from '../../../utils/DateUtils';
+import { RowDisplayData } from '../../../types/TransactionTypes';
 import { Alert } from 'react-native';
 
 interface Props {
@@ -40,13 +41,13 @@ const TransactionCard: React.FC<Props> = ({
 
   return (
     <View style={styles.transactionCard}>
-      <View style={{ flex: 1, marginLeft: 10 }}>
+      <View style={styles.productInfoContainer}>
         <Text style={styles.productName}>{productName || 'No Name'}</Text>
         {quantity && <Text style={styles.quantityText}>Qty: {quantity}</Text>}
 
         {activeTab === 'Inventory Log' && (
           <View style={styles.status}>
-            <Text style={[styles.timestampText, { marginRight: 10 }]}>
+            <Text style={[styles.timestampText, styles.marginRight10]}>
               {formatOnlyTime(timestamp)}
             </Text>
             <Text
@@ -69,17 +70,13 @@ const TransactionCard: React.FC<Props> = ({
       (activeTab !== 'Inventory' && activeTab !== 'Inventory Log') ? (
         <>
           <TouchableOpacity
-            style={{ marginLeft: 10 }}
+            style={styles.marginLeft10}
             onPress={() => onEdit(rowData, originalIndex + 2)}
           >
-            <Ionicons
-              name="create-outline"
-              size={23}
-              style={{ color: '#CC8FEC' }}
-            />
+            <Ionicons name="create-outline" size={23} style={styles.editIcon} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ marginLeft: 10 }}
+            style={styles.marginLeft10}
             onPress={() =>
               Alert.alert(
                 'Confirm Delete',
@@ -102,49 +99,5 @@ const TransactionCard: React.FC<Props> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  transactionCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    marginVertical: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  status: { flexDirection: 'row', alignItems: 'center' },
-  productName: { fontSize: 17, fontWeight: '600', color: '#1A1A1A' },
-  timestampText: {
-    fontSize: 13,
-    color: '#666',
-    marginTop: 2,
-    fontWeight: '500',
-  },
-  amountBox: {
-    backgroundColor: '#FFF2E0',
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    minWidth: 80,
-    alignItems: 'center',
-  },
-  quantityText: {
-    fontSize: 14,
-    color: '#444',
-    marginTop: 4,
-    fontWeight: '500',
-  },
-  amountText: { color: '#F78C1F', fontWeight: '700', fontSize: 15 },
-  added: { color: '#CC8FEC' },
-  removed: { color: '#FF0000' },
-  statusText: { fontWeight: '600', color: '#000' },
-});
 
 export default TransactionCard;

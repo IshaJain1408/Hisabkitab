@@ -4,10 +4,15 @@ import { appendData } from "./AppendData";
 import { logInventoryChange } from "./logInventoryChange";
 import { handleError } from "../../../utils/ErrorHandler";
 import { markRowAsUpdated } from "./MarkRowAsUpdated";
-import { showErrorPopup } from "../../../components/popup/ErrorPopup";
-import { showSuccessPopup } from "../../../components/popup/SuccessPopup";
+import { showErrorPopup } from "../../../components/popup/ErrorPopup/ErrorPopup";
+import { showSuccessPopup } from "../../../components/popup/SuccessPopup/SuccessPopup";
 import { getTimestamp } from "../../../utils/DateUtils";
 import { PurchaseData } from "../../../types/Index";
+
+
+const HEADER_OFFSET = 2; 
+const NO_ATTACHMENT = "No Attachment";
+const DEFAULT_FLAGS = ["FALSE", "FALSE"];
 
 
 export async function handlePurchase(
@@ -20,51 +25,27 @@ export async function handlePurchase(
 ) {
   if (!spreadsheetId || !accessToken) return showErrorPopup({ title: 'Error', message: 'Sheet not initialized' });
 
-const timestamp = `'${getTimestamp()}`;
+  const timestamp = `'${getTimestamp()}`;
   const newQty = parseInt(data.quantity || "0", 10);
 
-  const rowValues = [
-    data.productName,
-    data.purchasingPrice,
-    data.quantity,
-    data.unit,
-    "No Attachment",
-    timestamp,
-    "FALSE",
-    "FALSE",
-  ];
+  const rowValues = prepareRowValues(data, timestamp);
 
   try {
     const purchaseData = await getSheetData(spreadsheetId, accessToken, "Purchase");
     if (!purchaseData) return showErrorPopup({ title: 'Error', message: 'Failed to load purchase data' });
 
-    const newName = (data.productName || "").trim();
-
     if (editRowIndex !== undefined) {
-      await processPurchaseEdit(spreadsheetId, accessToken, purchaseData, editRowIndex, newName, newQty, data);
+      await handleEditPurchase(spreadsheetId, accessToken, purchaseData, editRowIndex, data, newQty);
     } else if (newQty > 0) {
-      await updateInventoryStock(
-        spreadsheetId,
-        accessToken,
-        {
-          productName: newName,
-          purchasingPrice: data.purchasingPrice,
-          quantity: newQty.toString(),
-          unit: data.unit,
-        },
-        undefined,
-        undefined,
-        undefined,
-        true,
-        false
-      );
+      await updateInventoryForProduct(spreadsheetId, accessToken, data.productName, newQty, data.unit, data.purchasingPrice);
+
     }
 
     const success = await appendData(spreadsheetId, accessToken, "Purchase", [rowValues]);
     if (!success) return showErrorPopup({ title: 'Error', message: 'Failed to save purchase' });
 
     const oldQty = await getOldPurchaseQtyIfEditing(purchaseData, editRowIndex);
-    await logInventoryChange(spreadsheetId, accessToken, newName, editRowIndex !== undefined ? newQty - oldQty : newQty, "Purchase");
+    await logInventoryChange(spreadsheetId, accessToken, data.productName, editRowIndex ? newQty - oldQty : newQty, "Purchase");
 
     showSuccessPopup(editRowIndex !== undefined ? 'Purchase updated!' : 'Purchase saved!');
     setShowModal?.(false);
@@ -74,75 +55,62 @@ const timestamp = `'${getTimestamp()}`;
   }
 }
 
+function prepareRowValues(data: PurchaseData, timestamp: string): (string)[] {
+  return [data.productName, data.purchasingPrice, data.quantity, data.unit, NO_ATTACHMENT, timestamp, ...DEFAULT_FLAGS];
+}
+
 async function getOldPurchaseQtyIfEditing(purchaseData: string[][], editRowIndex?: number): Promise<number> {
   if (editRowIndex === undefined) return 0;
-  const oldRow = purchaseData[editRowIndex - 2];
+  const oldRow = purchaseData[editRowIndex - HEADER_OFFSET];
   return oldRow ? parseInt(oldRow[2] || "0", 10) : 0;
 }
 
-async function processPurchaseEdit(
+async function handleEditPurchase(
   spreadsheetId: string,
   accessToken: string,
   purchaseData: string[][],
   editRowIndex: number,
-  newName: string,
-  newQty: number,
-  data: PurchaseData
+  data: PurchaseData,
+  newQty: number
 ) {
-  const oldRow = purchaseData[editRowIndex - 2];
+  const oldRow = purchaseData[editRowIndex - HEADER_OFFSET];
   const oldQty = oldRow ? parseInt(oldRow[2] || "0", 10) : 0;
   const oldName = oldRow ? (oldRow[0] || "").trim() : "";
 
   await markRowAsUpdated(spreadsheetId, accessToken, "Purchase", editRowIndex);
 
-  if (oldName === newName) {
+  if (oldName === data.productName) {
     const deltaQty = newQty - oldQty;
-    await updateInventoryStock(
-      spreadsheetId,
-      accessToken,
-      {
-        productName: newName,
-        purchasingPrice: data.purchasingPrice,
-        quantity: deltaQty.toString(),
-        unit: data.unit,
-      },
-      undefined,
-      undefined,
-      undefined,
-      true,
-      false
-    );
+    await updateInventoryForProduct(spreadsheetId, accessToken, data.productName, deltaQty, data.unit, data.purchasingPrice);
   } else {
-    await updateInventoryStock(
-      spreadsheetId,
-      accessToken,
-      {
-        productName: oldName,
-        purchasingPrice: data.purchasingPrice,
-        quantity: (-oldQty).toString(),
-        unit: data.unit,
-      },
-      undefined,
-      undefined,
-      undefined,
-      true,
-      false
-    );
-
-    await updateInventoryStock(
-      spreadsheetId,
-      accessToken,
-      {
-        productName: newName,
-        purchasingPrice: data.purchasingPrice,
-        quantity: newQty.toString(),
-        unit: data.unit,
-      },
-      undefined,
-      undefined,
-      undefined,
-      true,
-      false
-    );
+    await updateInventoryForProduct(spreadsheetId, accessToken, oldName, -oldQty, data.unit, data.purchasingPrice);
+    await updateInventoryForProduct(spreadsheetId, accessToken, data.productName, newQty, data.unit, data.purchasingPrice);
   }
+}
+
+async function updateInventoryForProduct(
+  spreadsheetId: string,
+  accessToken: string,
+  productName: string,
+  quantity: number,
+  unit: string,
+  purchasingPrice: string 
+) {
+  if (!productName || quantity === 0) return;
+
+  await updateInventoryStock(
+    spreadsheetId,
+    accessToken,
+    {
+      productName,
+      purchasingPrice,
+      quantity: quantity.toString(),
+      unit,
+    },
+    undefined,
+    undefined,
+    undefined,
+    true,
+    false
+  );
 }

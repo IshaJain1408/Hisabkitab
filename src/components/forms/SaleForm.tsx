@@ -5,11 +5,11 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/Store';
 import { getSheetData } from '../../services/spreadsheet/methods/GetSheetData';
-import InputField from '../common/InputField';
-import PickerField from '../common/PickerField';
-import SubmitButton from '../common/SubmitButton';
+import InputField from '../common/InputField/InputField';
+import PickerField from '../common/PickerField/PickerField';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { TransactionFormValues } from '../../types/Index';
-import ProductInfo from '../common/ProductInfo';
+import ProductInfo from '../common/ProductInfo/ProductInfo';
 
 interface Props {
   onSave: (data: TransactionFormValues, editRowIndex?: number) => void;
@@ -30,12 +30,7 @@ const TransactionSchema = Yup.object().shape({
     .moreThan(0, 'Quantity must be greater than 0'),
 });
 
-const SaleForm: React.FC<Props> = ({
-  onSave,
-  onClose,
-  initialValues,
-  editRowIndex,
-}) => {
+const SaleForm: React.FC<Props> = ({ onSave, initialValues, editRowIndex }) => {
   const [inventory, setInventory] = useState<
     { productName: string; unit: string; quantity: string }[]
   >([]);
@@ -103,7 +98,6 @@ const SaleForm: React.FC<Props> = ({
       onSubmit={(values, { resetForm }) => {
         onSave(values, editRowIndex);
         resetForm();
-        onClose();
       }}
     >
       {({

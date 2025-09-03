@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import styles from './TransactionScreen.styles';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
-import TransactionModal from '../components/common/TransactionModal';
-import { useTransactionLogic } from '../hooks/UseTransactionLogic';
-import TransactionList from '../components/user/TransactionList';
+import TransactionModal from '../../components/common/TransactionModal/TransactionModal';
+import { useTransactionLogic } from '../../hooks/UseTransactionLogic';
+import TransactionList from '../../components/user/TransactionList/TransactionList';
 
 const tabs = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
 
@@ -126,35 +127,5 @@ const TransactionScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 10,
-    paddingTop: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-  },
-
-  actionButton: {
-    marginBottom: 50,
-    backgroundColor: '#FFA500',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 30,
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-
-  actionButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-});
 
 export default TransactionScreen;

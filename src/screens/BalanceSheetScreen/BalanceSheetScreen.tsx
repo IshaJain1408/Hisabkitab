@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import styles from './BalanceSheetScreen.styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Pdf from 'react-native-pdf';
-import { GoogleSheetService } from '../services/spreadsheet/google/GoogleSheetService';
-import { generatePDF } from '../services/documents/PDFGenerator';
-import { getBalanceSheetHTML } from '../services/documents/BalanceSheetHTML';
+import { GoogleSheetService } from '../../services/spreadsheet/google/GoogleSheetService';
+import { generatePDF } from '../../services/documents/PDFGenerator';
+import { getBalanceSheetHTML } from '../../services/documents/BalanceSheetHTML';
 
 const BalanceSheetScreen = () => {
   const [balanceData, setBalanceData] = useState<{
@@ -65,13 +58,8 @@ const BalanceSheetScreen = () => {
       </TouchableOpacity>
 
       {pdfPath && (
-        <View
-          style={{
-            height: Dimensions.get('window').height * 0.7,
-            marginTop: 20,
-          }}
-        >
-          <Pdf source={{ uri: `file://${pdfPath}` }} style={{ flex: 1 }} />
+        <View style={styles.pdfContainer}>
+          <Pdf source={{ uri: `file://${pdfPath}` }} style={styles.pdfViewer} />
         </View>
       )}
     </ScrollView>
@@ -79,23 +67,3 @@ const BalanceSheetScreen = () => {
 };
 
 export default BalanceSheetScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    marginTop: 42,
-    backgroundColor: '#f1f3f6',
-    flexGrow: 1,
-  },
-  title: { fontSize: 28, fontWeight: '800', textAlign: 'center' },
-  button: {
-    backgroundColor: '#FC991A',
-    borderRadius: 25,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 10, fontSize: 16 },
-});

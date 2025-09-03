@@ -1,12 +1,12 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { RootStackParamList } from '../types/Types';
-import HomeScreen from '../screens/HomeScreen';
-import WelcomeScreen from '../screens/WelcomeScreen';
+import HomeScreen from '../screens/HomeScreen/HomeScreen';
+import WelcomeScreen from '../screens/WelcomeScreen/WelcomeScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BalanceSheetScreen from '../screens/BalanceSheetScreen';
-import TransactionScreen from '../screens/TransactionScreen';
+import BalanceSheetScreen from '../screens/BalanceSheetScreen/BalanceSheetScreen';
+import TransactionScreen from '../screens/TransactionScreen/TransactionScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

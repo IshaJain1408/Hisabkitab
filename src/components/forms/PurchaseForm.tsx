@@ -1,9 +1,9 @@
 import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import InputField from '../common/InputField';
-import PickerField from '../common/PickerField';
-import SubmitButton from '../common/SubmitButton';
+import InputField from '../common/InputField/InputField';
+import PickerField from '../common/PickerField/PickerField';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 interface Props {
   onSave: (
@@ -41,7 +41,7 @@ const FormSchema = Yup.object().shape({
 
 const PurchaseForm: React.FC<Props> = ({
   onSave,
-  onClose,
+  // onClose,
   initialValues,
   editRowIndex,
 }) => {
@@ -61,7 +61,7 @@ const PurchaseForm: React.FC<Props> = ({
       onSubmit={(values, { resetForm }) => {
         onSave(values, editRowIndex);
         resetForm();
-        onClose();
+        // onClose();
       }}
     >
       {({

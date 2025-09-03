@@ -3,17 +3,17 @@ import { normalizeString, parseIntSafe } from "../../../utils/SheetUtils";
 import { logInventoryChange } from "./logInventoryChange";
 import { updateRow } from "./UpdateRow";
 import { handleError } from "../../../utils/ErrorHandler";
-import { showErrorPopup } from "../../../components/popup/ErrorPopup";
-import { showSuccessPopup } from "../../../components/popup/SuccessPopup";
+import { showErrorPopup } from "../../../components/popup/ErrorPopup/ErrorPopup";
+import { showSuccessPopup } from "../../../components/popup/SuccessPopup/SuccessPopup";
+import { InventoryActionType } from "../google/GoogleSheetService";
 
-type InventoryActionType = "Purchase" | "Sales" | "Inventory";
+const HEADER_OFFSET = 2; 
 
 const statusColumnIndex: Record<InventoryActionType, number> = {
   Purchase: 6,  
   Sales: 8,     
   Inventory: 3, 
 };
-
 
 function extractProductInfo(sheetName: InventoryActionType, row: string[]): { productName: string; quantity: number } {
   switch (sheetName) {
@@ -57,17 +57,10 @@ async function adjustInventoryOnDelete(
   const existingRow = inventoryData[invIndex];
   const currentStock = parseIntSafe(existingRow[1]);
 
-   const newStock = sheetName === "Purchase"
-    ? currentStock - quantity
-    : sheetName === "Sales"
-    ? currentStock + quantity
-    : currentStock;
+  const newStock = calculateNewStock(sheetName, currentStock, quantity);
+  const sheetRowIndex = inventoryDataRaw.findIndex(r => r === existingRow) + HEADER_OFFSET;
 
-
-
-  const sheetRowIndex = inventoryDataRaw.findIndex(r => r === existingRow) + 2;
-
-  await updateRow(spreadsheetId, accessToken, "Inventory", sheetRowIndex, [
+  const updatedRow = [
     existingRow[0],
     newStock.toString(),
     new Date().toLocaleString("en-IN"),
@@ -76,7 +69,10 @@ async function adjustInventoryOnDelete(
     existingRow[5] || "pcs",
     existingRow[6] || "FALSE",
     existingRow[7] || "TRUE",
-  ]);
+  ];
+
+  await updateRow(spreadsheetId, accessToken, "Inventory", sheetRowIndex, updatedRow);
+
 
   await logInventoryChange(
     spreadsheetId,
@@ -86,6 +82,15 @@ async function adjustInventoryOnDelete(
     sheetName
   );
 }
+
+function calculateNewStock(sheetName: InventoryActionType, currentStock: number, quantity: number): number {
+  switch (sheetName) {
+    case "Purchase": return currentStock - quantity;
+    case "Sales": return currentStock + quantity;
+    case "Inventory": return currentStock;
+  }
+}
+
 
 async function markRowAsDeleted(
   spreadsheetId: string,
