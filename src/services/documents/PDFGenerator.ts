@@ -1,7 +1,7 @@
 import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { Platform, Alert } from 'react-native';
-import { showSuccessPopup } from '../../components/popup/successPopup/SuccessPopup';
+import { showSuccessPopup } from '../../components/popup/SuccessPopup/SuccessPopup';
 
 export const generatePDF = async (htmlContent: string) => {
   try {

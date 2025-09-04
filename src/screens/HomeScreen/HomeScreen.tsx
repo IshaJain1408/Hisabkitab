@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import styles from './HomeScreen.styles';
-import Header from '../../components/common/header/Header';
+import Header from '../../components/common/Header/Header';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/Store';
 import { setUser } from '../../redux/slices/UserSlice';
 import { useNavigation } from '@react-navigation/native';
-import DownloadBalanceSheetButton from '../../components/common/downloadBalanceSheetButton/DownloadBalanceSheetButton';
+import DownloadBalanceSheetButton from '../../components/common/DownloadBalanceSheetButton/DownloadBalanceSheetButton';
 import { useTransactionLogic } from '../../hooks/UseTransactionLogic';
 
 type CardProps = {

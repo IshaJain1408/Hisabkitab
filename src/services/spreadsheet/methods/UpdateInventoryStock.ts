@@ -5,8 +5,8 @@ import { logInventoryChange } from "./logInventoryChange";
 import { handleError } from "../../../utils/ErrorHandler";
 import { updateRow } from "./UpdateRow";
 import { appendData } from "./AppendData";
-import { showErrorPopup } from "../../../components/popup/errorPopup/ErrorPopup";
-import { showSuccessPopup } from "../../../components/popup/successPopup/SuccessPopup";
+import { showErrorPopup } from "../../../components/popup/ErrorPopup/ErrorPopup";
+import { showSuccessPopup } from "../../../components/popup/SuccessPopup/SuccessPopup";
 import { InventoryData } from "../../../types/Index";
 
 const HEADER_OFFSET = 2;

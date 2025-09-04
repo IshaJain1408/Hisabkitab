@@ -6,7 +6,7 @@ import Pdf from 'react-native-pdf';
 import { GoogleSheetService } from '../../services/spreadsheet/google/GoogleSheetService';
 import { generatePDF } from '../../services/documents/PDFGenerator';
 import { getBalanceSheetHTML } from '../../services/documents/BalanceSheetHTML';
-import LoaderOverlay from '../../components/common/loaderOverlay/LoaderOverlay';
+import LoaderOverlay from '../../components/common/LoaderOverlay/LoaderOverlay';
 
 const BalanceSheetScreen = () => {
   const [balanceData, setBalanceData] = useState<{

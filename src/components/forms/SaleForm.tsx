@@ -5,11 +5,11 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/Store';
 import { getSheetData } from '../../services/spreadsheet/methods/GetSheetData';
-import InputField from '../common/inputField/InputField';
-import PickerField from '../common/pickerField/PickerField';
-import SubmitButton from '../common/submitButton/SubmitButton';
+import InputField from '../common/InputField/InputField';
+import PickerField from '../common/PickerField/PickerField';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { TransactionFormValues } from '../../types/Index';
-import ProductInfo from '../common/productInfo/ProductInfo';
+import ProductInfo from '../common/ProductInfo/ProductInfo';
 
 interface Props {
   onSave: (data: TransactionFormValues, editRowIndex?: number) => void;

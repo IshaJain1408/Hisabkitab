@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from './TransactionScreen.styles';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
-import TransactionModal from '../../components/common/transactionModal/TransactionModal';
+import TransactionModal from '../../components/common/TransactionModal/TransactionModal';
 import { useTransactionLogic } from '../../hooks/UseTransactionLogic';
-import TransactionList from '../../components/user/transactionList/TransactionList';
+import TransactionList from '../../components/user/TransactionList/TransactionList';
 
 const tabs = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
 

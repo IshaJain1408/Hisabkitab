@@ -1,9 +1,9 @@
 import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import InputField from '../common/inputField/InputField';
-import PickerField from '../common/pickerField/PickerField';
-import SubmitButton from '../common/submitButton/SubmitButton';
+import InputField from '../common/InputField/InputField';
+import PickerField from '../common/PickerField/PickerField';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 interface Props {
   onSave: (
