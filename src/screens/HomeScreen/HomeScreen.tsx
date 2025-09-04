@@ -8,6 +8,7 @@ import { setUser } from '../../redux/slices/UserSlice';
 import { useNavigation } from '@react-navigation/native';
 import DownloadBalanceSheetButton from '../../components/common/DownloadBalanceSheetButton/DownloadBalanceSheetButton';
 import { useTransactionLogic } from '../../hooks/UseTransactionLogic';
+import { Images } from '../../assets/Assets';
 
 type CardProps = {
   title: string;
@@ -43,25 +44,25 @@ const HomeScreen = () => {
           <Card
             title="Purchase"
             color="#FEC27E"
-            image={require('../../assets/purchase.png')}
+            image={Images.purchase}
             onPress={() => handleCardPress('Purchase')}
           />
           <Card
             title="Sales"
             color="#E2B6FF"
-            image={require('../../assets/sales.png')}
+            image={Images.sales}
             onPress={() => handleCardPress('Sales')}
           />
           <Card
             title="Inventory"
             color="#F4F1ED"
-            image={require('../../assets/Ivt.png')}
+            image={Images.inventory}
             onPress={() => handleCardPress('Inventory')}
           />
           <Card
             title="Inventory Log"
             color="#FFCB91"
-            image={require('../../assets/history.png')}
+            image={Images.history}
             onPress={() => handleCardPress('Inventory Log')}
           />
         </View>

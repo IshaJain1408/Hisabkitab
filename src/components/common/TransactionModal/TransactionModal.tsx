@@ -67,7 +67,6 @@ const TransactionModal: React.FC<Props> = ({
               {activeTab === 'Purchase' && (
                 <PurchaseForm
                   onSave={handleSave}
-                  onClose={onClose}
                   initialValues={initialValues}
                   editRowIndex={editRowIndex}
                 />
@@ -75,7 +74,6 @@ const TransactionModal: React.FC<Props> = ({
               {activeTab === 'Sales' && (
                 <SaleForm
                   onSave={handleSave}
-                  onClose={onClose}
                   initialValues={initialValues}
                   editRowIndex={editRowIndex}
                 />
@@ -83,7 +81,6 @@ const TransactionModal: React.FC<Props> = ({
               {activeTab === 'Inventory' && (
                 <InventoryForm
                   onSave={handleSave}
-                  onClose={onClose}
                   initialValues={initialValues}
                   editRowIndex={editRowIndex}
                 />

@@ -2,13 +2,10 @@ export const getBalanceSheetHTML = (balanceData: {
   totalPurchase: number;   
   totalSales: number;     
   inventoryValue: number; 
-  profit: number;         
+  profit: number;    
+  tradePayables:number
 }) => {
   const totalAssets = balanceData.inventoryValue + balanceData.totalSales;
-  const totalLiabilitiesAndEquity =
-    balanceData.totalPurchase + balanceData.profit;
-  const tradePayables = totalAssets - totalLiabilitiesAndEquity;
-
   return `
 <!DOCTYPE html>
 <html>
@@ -57,7 +54,7 @@ export const getBalanceSheetHTML = (balanceData: {
 <td colspan="3" class="sub-section">(2) Non-current Assets</td>
 </tr>
 <tr>
-<td>(a) Trade Payables</td><td></td><td class="right">₹${tradePayables}</td>
+<td>(a) Trade Payables</td><td></td><td class="right">₹${balanceData.tradePayables}</td>
 <td>(a) Fixed Assets</td><td></td><td></td>
 </tr>
 <tr>

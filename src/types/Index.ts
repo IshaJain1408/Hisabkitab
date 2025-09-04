@@ -31,5 +31,5 @@ export interface TransactionFormValues {
   quantity: string;
   unit: string;
   message: string;
-  availableQuantity: string; 
+  availableQuantity: string;
 }

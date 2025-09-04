@@ -6,6 +6,8 @@ type BalanceSheet = {
   totalSales: number;
   inventoryValue: number;
   profit: number;
+  tradePayables: number;
+
 };
 
 export async function getBalanceSheet(
@@ -25,10 +27,11 @@ export async function getBalanceSheet(
   const totalPurchase = calculateTotalPurchase(validPurchaseRows);
   const totalSales = calculateTotalSales(validSalesRows);
   const inventoryValue = calculateInventoryValue(validInventoryRows);
-
-  const profit = totalSales - totalPurchase;
-
-  return { totalPurchase, totalSales, inventoryValue, profit };
+  
+  const cogs = calculateCOGS(validSalesRows, validInventoryRows);
+  const profit = totalSales - cogs;
+  const tradePayables = totalPurchase - cogs;
+  return { totalPurchase, totalSales, inventoryValue, profit,tradePayables};
 }
 
 
@@ -85,6 +88,28 @@ function calculateInventoryValue(rows: string[][]): number {
       const stock = parseInt(row[1],10);
       const purchasePrice = parseFloat(row[4]);
       return !isNaN(stock) && !isNaN(purchasePrice) ? stock * purchasePrice : 0;
+    })
+    .reduce((sum, val) => sum + val, 0);
+}
+
+function calculateCOGS(
+  salesRows: string[][],
+  inventoryRows: string[][]
+): number {
+  const productPriceMap: Record<string, number> = {};
+  inventoryRows.forEach((row) => {
+    const productName = row[0]?.trim();
+    const purchasePrice = parseFloat(row[4]);
+    if (productName && !isNaN(purchasePrice)) {
+      productPriceMap[productName] = purchasePrice;
+    }
+  });
+  return salesRows
+    .map((row) => {
+      const productName = row[3]?.trim();
+      const qty = parseInt(row[6], 10);
+      const purchasePrice = productPriceMap[productName] ?? 0;
+      return !isNaN(qty) ? qty * purchasePrice : 0;
     })
     .reduce((sum, val) => sum + val, 0);
 }

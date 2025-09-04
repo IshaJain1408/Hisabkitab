@@ -1,18 +1,19 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { RootStackParamList } from '../types/Types';
-import HomeScreen from '../screens/HomeScreen/HomeScreen';
-import WelcomeScreen from '../screens/WelcomeScreen/WelcomeScreen';
+import { RootStackParamList } from '../../types/Types';
+import HomeScreen from '../../screens/HomeScreen/HomeScreen';
+import WelcomeScreen from '../../screens/WelcomeScreen/WelcomeScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BalanceSheetScreen from '../screens/BalanceSheetScreen/BalanceSheetScreen';
-import TransactionScreen from '../screens/TransactionScreen/TransactionScreen';
+import BalanceSheetScreen from '../../screens/BalanceSheetScreen/BalanceSheetScreen';
+import TransactionScreen from '../../screens/TransactionScreen/TransactionScreen';
+import styles from './AppNavigator.styles';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="WelcomeScreen">
           <Stack.Screen

@@ -1,67 +1,32 @@
 import React from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import InputField from '../common/InputField/InputField';
 import PickerField from '../common/PickerField/PickerField';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import {
+  PurchaseFormDefaults,
+  PurchaseFormSchema,
+} from '../../constants/FormConstants';
 
 interface Props {
-  onSave: (
-    data: {
-      productName: string;
-      purchasingPrice: string;
-      quantity: string;
-      unit: string;
-      file?: any;
-    },
-    editRowIndex?: number,
-  ) => void;
-  onClose: () => void;
-  initialValues?: {
-    productName: string;
-    purchasingPrice: string;
-    quantity: string;
-    unit: string;
-    file?: any;
-  };
+  onSave: (data: typeof PurchaseFormDefaults, editRowIndex?: number) => void;
+  initialValues?: typeof PurchaseFormDefaults;
   editRowIndex?: number;
 }
 
-const FormSchema = Yup.object().shape({
-  productName: Yup.string().required('Product Name is required'),
-  purchasingPrice: Yup.number()
-    .required('Purchasing Price is required')
-    .typeError('Must be a number'),
-  quantity: Yup.number()
-    .required('Quantity is required')
-    .typeError('Must be a number')
-    .moreThan(0, 'Quantity must be greater than 0'),
-  unit: Yup.string().required('Unit is required'),
-});
-
 const PurchaseForm: React.FC<Props> = ({
   onSave,
-  // onClose,
   initialValues,
   editRowIndex,
 }) => {
-  const defaultValues = {
-    productName: '',
-    purchasingPrice: '',
-    quantity: '',
-    unit: 'pcs',
-    file: undefined,
-  };
-
   return (
     <Formik
-      initialValues={initialValues || defaultValues}
+      initialValues={initialValues || PurchaseFormDefaults}
       enableReinitialize
-      validationSchema={FormSchema}
+      validationSchema={PurchaseFormSchema}
       onSubmit={(values, { resetForm }) => {
         onSave(values, editRowIndex);
         resetForm();
-        // onClose();
       }}
     >
       {({

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/Store';
 import { getSheetData } from '../../services/spreadsheet/methods/GetSheetData';
@@ -10,25 +9,16 @@ import PickerField from '../common/PickerField/PickerField';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { TransactionFormValues } from '../../types/Index';
 import ProductInfo from '../common/ProductInfo/ProductInfo';
+import {
+  SaleFormDefaults,
+  SaleFormSchema,
+} from '../../constants/FormConstants';
 
 interface Props {
   onSave: (data: TransactionFormValues, editRowIndex?: number) => void;
   initialValues?: TransactionFormValues;
-  onClose: () => void;
   editRowIndex?: number;
 }
-
-const TransactionSchema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
-  productName: Yup.string().required('Product name is required'),
-  amount: Yup.number()
-    .typeError('Selling Price must be a number')
-    .required('Selling Price is required'),
-  quantity: Yup.number()
-    .typeError('Quantity must be a number')
-    .required('Quantity is required')
-    .moreThan(0, 'Quantity must be greater than 0'),
-});
 
 const SaleForm: React.FC<Props> = ({ onSave, initialValues, editRowIndex }) => {
   const [inventory, setInventory] = useState<
@@ -68,22 +58,12 @@ const SaleForm: React.FC<Props> = ({ onSave, initialValues, editRowIndex }) => {
   }, [accessToken, spreadsheetId]);
 
   const computedInitialValues = React.useMemo(() => {
-    const defaultValues: TransactionFormValues = {
-      name: '',
-      productName: '',
-      number: '',
-      amount: '',
-      quantity: '',
-      unit: '',
-      message: '',
-      availableQuantity: '',
-    };
-    if (!initialValues) return defaultValues;
+    if (!initialValues) return SaleFormDefaults;
     const selected = inventory.find(
       item => item.productName === initialValues.productName,
     );
     return {
-      ...defaultValues,
+      ...SaleFormDefaults,
       ...initialValues,
       unit: selected?.unit || initialValues.unit,
       availableQuantity: selected?.quantity || initialValues.availableQuantity,
@@ -94,7 +74,7 @@ const SaleForm: React.FC<Props> = ({ onSave, initialValues, editRowIndex }) => {
     <Formik
       initialValues={computedInitialValues}
       enableReinitialize
-      validationSchema={TransactionSchema}
+      validationSchema={SaleFormSchema}
       onSubmit={(values, { resetForm }) => {
         onSave(values, editRowIndex);
         resetForm();

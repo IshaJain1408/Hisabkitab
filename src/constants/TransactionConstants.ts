@@ -1,3 +1,5 @@
+export const TABS = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
+
 export const SECTION_TITLES: Record<string, string> = {
   Purchase: 'Purchase History',
   Sales: 'Sales History',
@@ -15,4 +17,10 @@ export const UPDATED_COLUMN_INDEX: Record<string, number> = {
   Sales: 10,
   Inventory: 7,
   Purchase: 8,
+};
+
+export const TAB_BUTTON_TEXT: Record<string, string> = {
+  Purchase: 'Add Purchase',
+  Sales: 'Add Sale',
+  Inventory: 'Add Inventory',
 };

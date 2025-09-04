@@ -1,60 +1,31 @@
 import React from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import InputField from '../common/InputField/InputField';
 import PickerField from '../common/PickerField/PickerField';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import {
+  InventoryFormDefaults,
+  InventoryFormSchema,
+} from '../../constants/FormConstants';
 
 interface Props {
-  onSave: (
-    data: {
-      productName: string;
-      purchasingPrice: string;
-      quantity: string;
-      unit: string;
-    },
-    editRowIndex?: number,
-  ) => void;
-  onClose: () => void;
-  initialValues?: {
-    productName: string;
-    purchasingPrice: string;
-    quantity: string;
-    unit: string;
-  };
+  onSave: (data: typeof InventoryFormDefaults, editRowIndex?: number) => void;
+  initialValues?: typeof InventoryFormDefaults;
   editRowIndex?: number;
 }
 
-const InventorySchema = Yup.object().shape({
-  productName: Yup.string().required('Product Name is required'),
-  purchasingPrice: Yup.number().typeError('Must be a number'),
-  quantity: Yup.number()
-    .required('Quantity is required')
-    .typeError('Must be a number')
-    .moreThan(0, 'Quantity must be greater than 0'),
-});
-
 const InventoryForm: React.FC<Props> = ({
   onSave,
-  // onClose,
   initialValues,
   editRowIndex,
 }) => {
-  const defaultValues = {
-    productName: '',
-    purchasingPrice: '',
-    quantity: '',
-    unit: 'pcs',
-  };
-
   return (
     <Formik
-      initialValues={initialValues || defaultValues}
-      validationSchema={InventorySchema}
+      initialValues={initialValues || InventoryFormDefaults}
+      validationSchema={InventoryFormSchema}
       onSubmit={(values, { resetForm }) => {
         onSave(values, editRowIndex);
         resetForm();
-        // onClose();
       }}
     >
       {({
