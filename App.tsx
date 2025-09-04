@@ -4,8 +4,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import { store, persistor } from './src/redux/Store';
 import AppNavigator from './src/navigation/AppNavigator';
-import { ErrorPopup } from './src/components/popup/ErrorPopup/ErrorPopup';
-import { SuccessPopup } from './src/components/popup/SuccessPopup/SuccessPopup';
+import { ErrorPopup } from './src/components/popup/errorPopup/ErrorPopup';
+import { SuccessPopup } from './src/components/popup/successPopup/SuccessPopup';
 
 const ReduxApp = () => {
   return (

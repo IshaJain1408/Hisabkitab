@@ -1,15 +1,15 @@
-import { STATUS_COLUMN_INDEX, UPDATED_COLUMN_INDEX } from '../constants/TransactionConstants';
+import { DELETED_COLUMN_INDEX, UPDATED_COLUMN_INDEX } from '../constants/TransactionConstants';
 import { RowDisplayData } from '../types/transactionTypes';
 
 export const isRowEmpty = (row: string[]) => row.every(cell => !cell || cell.trim() === '');
 
 export const shouldIncludeRow = (row: string[], activeTab: string): boolean => {
-  const statusIndex = STATUS_COLUMN_INDEX[activeTab];
+  const deletedIndex = DELETED_COLUMN_INDEX[activeTab];
   const updatedIndex = UPDATED_COLUMN_INDEX[activeTab];
 
-  if (statusIndex === undefined || updatedIndex === undefined) return true;
+  if (deletedIndex === undefined || updatedIndex === undefined) return true;
 
-  const status = row[statusIndex]?.toLowerCase() || '';
+  const status = row[deletedIndex]?.toLowerCase() || '';
   const isUpdated = (row[updatedIndex] || '').toString().toLowerCase() === 'true';
 
   return status !== 'true' && !isUpdated;

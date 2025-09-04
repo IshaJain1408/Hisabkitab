@@ -1,6 +1,7 @@
 import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { Platform, Alert } from 'react-native';
+import { showSuccessPopup } from '../../components/popup/successPopup/SuccessPopup';
 
 export const generatePDF = async (htmlContent: string) => {
   try {
@@ -23,9 +24,8 @@ export const generatePDF = async (htmlContent: string) => {
     const destPath = `${downloadsPath}/${fileName}`;
 
     await RNFS.moveFile(file.filePath, destPath);
-
-    Alert.alert('Success', `PDF saved to Downloads:\n${destPath}`);
-    return destPath;
+    showSuccessPopup(`PDF saved to Downloads:\n${destPath}`);
+     return destPath;
   } catch (error) {
     console.error('PDF generation error:', error);
     Alert.alert('Error', 'Failed to save PDF');

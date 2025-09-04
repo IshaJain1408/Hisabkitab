@@ -5,7 +5,7 @@ export const SECTION_TITLES: Record<string, string> = {
   'Inventory Log': 'Inventory Logs',
 };
 
-export const STATUS_COLUMN_INDEX: Record<string, number> = {
+export const DELETED_COLUMN_INDEX: Record<string, number> = {
   Purchase: 7,
   Sales: 9,
   Inventory: 4,

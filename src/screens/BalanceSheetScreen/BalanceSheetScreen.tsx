@@ -6,6 +6,7 @@ import Pdf from 'react-native-pdf';
 import { GoogleSheetService } from '../../services/spreadsheet/google/GoogleSheetService';
 import { generatePDF } from '../../services/documents/PDFGenerator';
 import { getBalanceSheetHTML } from '../../services/documents/BalanceSheetHTML';
+import LoaderOverlay from '../../components/common/loaderOverlay/LoaderOverlay';
 
 const BalanceSheetScreen = () => {
   const [balanceData, setBalanceData] = useState<{
@@ -15,6 +16,7 @@ const BalanceSheetScreen = () => {
     profit: number;
   } | null>(null);
   const [pdfPath, setPdfPath] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchBalance = async () => {
     try {
@@ -38,10 +40,16 @@ const BalanceSheetScreen = () => {
 
   const handleDownload = async () => {
     if (!balanceData) return;
-    const filePath = await generatePDF(getBalanceSheetHTML(balanceData));
-    if (filePath) {
-      setPdfPath(filePath);
-      Alert.alert('Success', `PDF saved:\n${filePath}`);
+    setLoading(true);
+    try {
+      const filePath = await generatePDF(getBalanceSheetHTML(balanceData));
+      if (filePath) {
+        setPdfPath(filePath);
+      }
+    } catch {
+      Alert.alert('Error', 'Failed to generate PDF.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,6 +64,8 @@ const BalanceSheetScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleDownload}>
         <Text style={styles.buttonText}>Generate & Show PDF</Text>
       </TouchableOpacity>
+
+      {loading && <LoaderOverlay visible={loading} />}
 
       {pdfPath && (
         <View style={styles.pdfContainer}>

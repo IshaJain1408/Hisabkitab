@@ -3,8 +3,8 @@ import { normalizeString, parseIntSafe } from "../../../utils/SheetUtils";
 import { logInventoryChange } from "./logInventoryChange";
 import { updateRow } from "./UpdateRow";
 import { handleError } from "../../../utils/ErrorHandler";
-import { showErrorPopup } from "../../../components/popup/ErrorPopup/ErrorPopup";
-import { showSuccessPopup } from "../../../components/popup/SuccessPopup/SuccessPopup";
+import { showErrorPopup } from "../../../components/popup/errorPopup/ErrorPopup";
+import { showSuccessPopup } from "../../../components/popup/successPopup/SuccessPopup";
 import { InventoryActionType } from "../google/GoogleSheetService";
 
 const HEADER_OFFSET = 2; 

@@ -26,8 +26,8 @@ export async function getBalanceSheet(
   const totalSales = calculateTotalSales(validSalesRows);
   const inventoryValue = calculateInventoryValue(validInventoryRows);
 
-  const cogs = totalPurchase - inventoryValue;
-  const profit = totalSales - cogs;
+  const profit = totalSales - totalPurchase;
+
   return { totalPurchase, totalSales, inventoryValue, profit };
 }
 

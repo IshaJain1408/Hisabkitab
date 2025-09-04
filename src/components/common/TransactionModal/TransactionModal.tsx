@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity } from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import styles from './TransactionModal.styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PurchaseForm from '../../forms/PurchaseForm';
 import SaleForm from '../../forms/SaleForm';
 import InventoryForm from '../../forms/InventoryForm';
-import LoaderOverlay from '../LoaderOverlay/LoaderOverlay';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -55,31 +60,36 @@ const TransactionModal: React.FC<Props> = ({
               ? 'Inventory'
               : 'Transaction'}
           </Text>
-          {activeTab === 'Purchase' && (
-            <PurchaseForm
-              onSave={handleSave}
-              onClose={onClose}
-              initialValues={initialValues}
-              editRowIndex={editRowIndex}
-            />
+          {loading ? (
+            <ActivityIndicator size="large" color="#FFA500" />
+          ) : (
+            <>
+              {activeTab === 'Purchase' && (
+                <PurchaseForm
+                  onSave={handleSave}
+                  onClose={onClose}
+                  initialValues={initialValues}
+                  editRowIndex={editRowIndex}
+                />
+              )}
+              {activeTab === 'Sales' && (
+                <SaleForm
+                  onSave={handleSave}
+                  onClose={onClose}
+                  initialValues={initialValues}
+                  editRowIndex={editRowIndex}
+                />
+              )}
+              {activeTab === 'Inventory' && (
+                <InventoryForm
+                  onSave={handleSave}
+                  onClose={onClose}
+                  initialValues={initialValues}
+                  editRowIndex={editRowIndex}
+                />
+              )}
+            </>
           )}
-          {activeTab === 'Sales' && (
-            <SaleForm
-              onSave={handleSave}
-              onClose={onClose}
-              initialValues={initialValues}
-              editRowIndex={editRowIndex}
-            />
-          )}
-          {activeTab === 'Inventory' && (
-            <InventoryForm
-              onSave={handleSave}
-              onClose={onClose}
-              initialValues={initialValues}
-              editRowIndex={editRowIndex}
-            />
-          )}
-          <LoaderOverlay visible={loading} />
         </View>
       </View>
     </Modal>

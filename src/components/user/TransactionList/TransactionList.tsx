@@ -9,7 +9,7 @@ import {
   getRowDisplayData,
 } from '../../../utils/RowUtils';
 import { parseDate, formatOnlyDate } from '../../../utils/DateUtils';
-import TransactionCard from '../TransactionCard/TransactionCard';
+import TransactionCard from '../transactionCard/TransactionCard';
 import { InventoryActionType } from '../../../services/spreadsheet/google/GoogleSheetService';
 
 const TransactionList: React.FC<CustomerListProps> = ({
