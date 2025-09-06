@@ -1,4 +1,4 @@
-export const TABS = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
+export const SHEET_NAMES = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
 
 export const SECTION_TITLES: Record<string, string> = {
   Purchase: 'Purchase History',

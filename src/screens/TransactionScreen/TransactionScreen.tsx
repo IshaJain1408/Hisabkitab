@@ -5,7 +5,10 @@ import { useFocusEffect, useRoute } from '@react-navigation/native';
 import TransactionModal from '../../components/common/TransactionModal/TransactionModal';
 import { useTransactionLogic } from '../../hooks/UseTransactionLogic';
 import TransactionList from '../../components/user/TransactionList/TransactionList';
-import { TAB_BUTTON_TEXT, TABS } from '../../constants/TransactionConstants';
+import {
+  SHEET_NAMES,
+  TAB_BUTTON_TEXT,
+} from '../../constants/TransactionConstants';
 import { parseRowData } from '../../utils/TransactionHelpers';
 
 const TransactionScreen = () => {
@@ -34,7 +37,7 @@ const TransactionScreen = () => {
 
       if (
         route.params?.selectedTab &&
-        TABS.includes(route.params.selectedTab)
+        SHEET_NAMES.includes(route.params.selectedTab)
       ) {
         setActiveTab(route.params.selectedTab);
       }

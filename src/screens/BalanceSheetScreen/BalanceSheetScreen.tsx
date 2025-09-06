@@ -14,6 +14,7 @@ const BalanceSheetScreen = () => {
     totalSales: number;
     inventoryValue: number;
     profit: number;
+    tradePayables: number;
   } | null>(null);
   const [pdfPath, setPdfPath] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

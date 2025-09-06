@@ -13,6 +13,7 @@ import { handlePurchase } from '../services/spreadsheet/methods/HandlePurchase';
 import { updateInventoryStock } from '../services/spreadsheet/methods/UpdateInventoryStock';
 import { deleteRow } from '../services/spreadsheet/methods/DeleteRow';
 import NetInfo from "@react-native-community/netinfo";
+import { SHEET_NAMES } from '../constants/TransactionConstants';
 
 export const useTransactionLogic = () => {
   const dispatch = useDispatch();
@@ -81,9 +82,8 @@ const initializeSheetData = useCallback(async () => {
       if (isConnected) {
         const token = await AsyncStorage.getItem('access_token');
         if (!token) return;
-        const sheetNames = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
         const allData: string[][] = [];
-        for (const sheetName of sheetNames) {
+        for (const sheetName of SHEET_NAMES) {
           const sheetData = await GoogleSheetService.getSheetData(spreadsheetId, token, sheetName);
           if (sheetData?.length) {
             allData.push(...sheetData.map(row => [sheetName, ...row]));
