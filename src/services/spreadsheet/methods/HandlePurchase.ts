@@ -78,7 +78,7 @@ async function handleEditPurchase(
   const oldName = oldRow ? (oldRow[0] || "").trim() : "";
 
   await markRowAsUpdated(spreadsheetId, accessToken, "Purchase", editRowIndex);
-
+console.log(data,"data")
   if (oldName === data.productName) {
     const deltaQty = newQty - oldQty;
     await updateInventoryForProduct(spreadsheetId, accessToken, data.productName, deltaQty, data.unit, data.purchasingPrice);
@@ -96,7 +96,7 @@ async function updateInventoryForProduct(
   unit: string,
   purchasingPrice: string 
 ) {
-  if (!productName || quantity === 0) return;
+  if (!productName) return;
 
   await updateInventoryStock(
     spreadsheetId,
