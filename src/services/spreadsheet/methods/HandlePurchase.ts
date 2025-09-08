@@ -20,7 +20,7 @@ export async function handlePurchase(
   accessToken: string,
   data: PurchaseData,
   editRowIndex?: number,
-  fetchCustomerData?: () => void,
+  fetchSheetData?: () => void,
   setShowModal?: (v: boolean) => void
 ) {
   if (!spreadsheetId || !accessToken) return showErrorPopup({ title: 'Error', message: 'Sheet not initialized' });
@@ -49,7 +49,7 @@ export async function handlePurchase(
 
     showSuccessPopup(editRowIndex !== undefined ? 'Purchase updated!' : 'Purchase saved!');
     setShowModal?.(false);
-    fetchCustomerData?.();
+    fetchSheetData?.();
   } catch (error) {
     handleError("Purchase save/update", error, "An error occurred while saving the purchase");
   }

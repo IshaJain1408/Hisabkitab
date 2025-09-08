@@ -18,7 +18,7 @@ export async function handleSale(
   accessToken: string,
   data: SaleData,
   editRowIndex?: number,
-  fetchCustomerData?: () => void,
+  fetchSheetData?: () => void,
   setShowModal?: (v: boolean) => void
 ) {
   if (!spreadsheetId || !accessToken) {
@@ -53,7 +53,7 @@ export async function handleSale(
 
     showSuccessPopup(editRowIndex !== undefined ? "Sale updated!" : "Sale saved!");
     setShowModal?.(false);
-    fetchCustomerData?.();
+    fetchSheetData?.();
   } catch (error) {
     handleError("Sale save", error, "An error occurred while saving the sale.");
   }

@@ -1,7 +1,7 @@
-import * as Yup from 'yup';
-import { TransactionFormValues } from '../types/Index';
+import  * as Yup from 'yup';
+import { InventoryData, PurchaseData, TransactionFormValues } from '../types/Index';
 
-export const PurchaseFormDefaults = {
+export const PurchaseFormDefaults :PurchaseData= {
   productName: '',
   purchasingPrice: '',
   quantity: '',
@@ -9,7 +9,7 @@ export const PurchaseFormDefaults = {
   file: undefined,
 };
 
-export const InventoryFormDefaults = {
+export const InventoryFormDefaults:InventoryData = {
   productName: '',
   purchasingPrice: '',
   quantity: '',

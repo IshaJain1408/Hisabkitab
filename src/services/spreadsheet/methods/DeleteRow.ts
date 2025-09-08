@@ -113,7 +113,7 @@ export async function deleteRow(
   accessToken: string | null,
   sheetName: InventoryActionType,
   rowIndex: number,
-  fetchCustomerData?: () => Promise<void>
+  fetchSheetData?: () => Promise<void>
 ) {
   if (!spreadsheetId || !accessToken) {
     return showErrorPopup({ title: "Initialization Error", message: "Sheet not initialized" });
@@ -138,7 +138,7 @@ export async function deleteRow(
 
     if (updated) {
       showSuccessPopup("Row marked as deleted successfully!");
-      if (fetchCustomerData) await fetchCustomerData();
+      if (fetchSheetData) await fetchSheetData();
     } else {
       showErrorPopup({ title: "Failed", message: "Failed to mark row as deleted" });
     }

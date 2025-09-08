@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface SheetState {
   spreadsheetId: string | null;
-  customers: string[][];
+  sheets: string[][];
 }
 
 const initialState: SheetState = {
   spreadsheetId: null,
-  customers: [],
+  sheets: [],
 };
 
 export const sheetSlice = createSlice({
@@ -17,11 +17,11 @@ export const sheetSlice = createSlice({
     setSpreadsheetId(state, action: PayloadAction<string>) {
       state.spreadsheetId = action.payload;
     },
-    setCustomers(state, action: PayloadAction<string[][]>) {
-      state.customers = action.payload;
+    setSheets(state, action: PayloadAction<string[][]>) {
+      state.sheets = action.payload;
     },
   },
 });
 
-export const { setSpreadsheetId, setCustomers } = sheetSlice.actions;
+export const { setSpreadsheetId, setSheets } = sheetSlice.actions;
 export default sheetSlice.reducer;

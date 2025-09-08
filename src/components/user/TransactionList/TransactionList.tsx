@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, View, Text, Image } from 'react-native';
 import styles from './TransactionList.styles';
-import { CustomerListProps } from '../../../types/TransactionTypes';
+import { SheetListProps } from '../../../types/TransactionTypes';
 import { SECTION_TITLES } from '../../../constants/TransactionConstants';
 import {
   isRowEmpty,
@@ -12,14 +12,14 @@ import { parseDate, formatOnlyDate } from '../../../utils/DateUtils';
 import TransactionCard from '../TransactionCard/TransactionCard';
 import { InventoryActionType } from '../../../services/spreadsheet/google/GoogleSheetService';
 
-const TransactionList: React.FC<CustomerListProps> = ({
-  customers,
+const TransactionList: React.FC<SheetListProps> = ({
+  sheets,
   activeTab,
   deleteRow,
   onEdit,
 }) => {
   const groupedBySheet: Record<string, string[][]> = {};
-  customers.forEach(row => {
+  sheets.forEach(row => {
     const sheet = row[0];
     groupedBySheet[sheet] = [...(groupedBySheet[sheet] || []), row];
   });

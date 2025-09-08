@@ -16,7 +16,7 @@ export async function updateInventoryStock(
   accessToken: string,
   data: InventoryData,
   editRowIndex?: number,
-  fetchCustomerData?: () => void,
+  fetchSheetData?: () => void,
   setShowModal?: (v: boolean) => void,
   skipLog: boolean = false,
   isMyProduct: boolean = true
@@ -65,7 +65,7 @@ export async function updateInventoryStock(
 
     if (isMyProduct) showSuccessPopup("Inventory updated!");
     setShowModal?.(false);
-    fetchCustomerData?.();
+    fetchSheetData?.();
   } catch (error) {
     handleError("Inventory update", error, "An error occurred while updating inventory");
   }

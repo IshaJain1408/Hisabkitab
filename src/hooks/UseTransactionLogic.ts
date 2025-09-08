@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
 import {setUser as setUserAction, setAccessToken as setAccessTokenAction, logout as logoutAction,
 } from '../redux/slices/UserSlice';
-import {setSpreadsheetId as setSpreadsheetIdAction, setCustomers as setCustomersAction} from '../redux/slices/SheetSlice';
+import {setSpreadsheetId as setSpreadsheetIdAction, setSheets as setSheetsAction} from '../redux/slices/SheetSlice';
 import { GoogleAuthService } from '../services/spreadsheet/google/GoogleAuthService';
 import { GoogleSheetService, InventoryActionType } from '../services/spreadsheet/google/GoogleSheetService';
 import { handleSale } from '../services/spreadsheet/methods/HandleSale';
@@ -19,7 +19,7 @@ export const useTransactionLogic = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { user, accessToken } = useSelector((state: RootState) => state.user);
-  const { spreadsheetId, customers } = useSelector((state: RootState) => state.sheet);
+  const { spreadsheetId, sheets } = useSelector((state: RootState) => state.sheet);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -71,12 +71,12 @@ const initializeSheetData = useCallback(async () => {
 }, [dispatch]);
 
 
- const fetchCustomerData = useCallback(async () => {
+ const fetchSheetData = useCallback(async () => {
     try {
       if (!spreadsheetId) return;
       const cached = await AsyncStorage.getItem("userSheetCache");
       if (cached) {
-        dispatch(setCustomersAction(JSON.parse(cached)));
+        dispatch(setSheetsAction(JSON.parse(cached)));
       }
 
       if (isConnected) {
@@ -89,7 +89,7 @@ const initializeSheetData = useCallback(async () => {
             allData.push(...sheetData.map(row => [sheetName, ...row]));
           }
         }
-        dispatch(setCustomersAction(allData));
+        dispatch(setSheetsAction(allData));
         await AsyncStorage.setItem("userSheetCache", JSON.stringify(allData));
       }
 
@@ -103,15 +103,15 @@ const initializeSheetData = useCallback(async () => {
       const currentUser = await GoogleAuthService.getCurrentUser();
       if (currentUser) {
         dispatch(setUserAction(currentUser));
-        fetchCustomerData();
+        fetchSheetData();
       } else {
         await handleGoogleLogin();
-        fetchCustomerData();
+        fetchSheetData();
       }
     } catch (err) {
       console.error('Error checking sign-in status:', err);
     }
-  }, [handleGoogleLogin, fetchCustomerData, dispatch]);
+  }, [handleGoogleLogin, fetchSheetData, dispatch]);
 
   const handleLogout = async () => {
     try {
@@ -127,27 +127,27 @@ const initializeSheetData = useCallback(async () => {
   const handlePurchaseSave = (
     data: { productName: string; purchasingPrice: string; quantity: string; unit: string; file?: any },
     editRowIndex?: number
-  ) => handlePurchase(spreadsheetId, accessToken, data, editRowIndex, fetchCustomerData, setShowModal);
+  ) => handlePurchase(spreadsheetId, accessToken, data, editRowIndex, fetchSheetData, setShowModal);
 
   const handleSaleSave = (
     data: { name: string; productName: string; number: string; amount: string; quantity: string; message: string },
     editRowIndex?: number
-  ) => handleSale(spreadsheetId, accessToken, data, editRowIndex, fetchCustomerData, setShowModal);
+  ) => handleSale(spreadsheetId, accessToken, data, editRowIndex, fetchSheetData, setShowModal);
 
   const handleInventorySave = (
     data: { productName: string; purchasingPrice: string; quantity: string; unit?: string },
     editRowIndex?: number
-  ) => updateInventoryStock(spreadsheetId, accessToken, data, editRowIndex, fetchCustomerData, setShowModal);
+  ) => updateInventoryStock(spreadsheetId, accessToken, data, editRowIndex, fetchSheetData, setShowModal);
 
 const deleteCustomerRow = (sheetName: InventoryActionType, rowIndex: number) => {
-  return deleteRow(spreadsheetId, accessToken, sheetName, rowIndex, fetchCustomerData);
+  return deleteRow(spreadsheetId, accessToken, sheetName, rowIndex, fetchSheetData);
   };
 
   useEffect(() => {
     const loadCachedData = async () => {
       const cached = await AsyncStorage.getItem("userSheetCache");
       if (cached) {
-        dispatch(setCustomersAction(JSON.parse(cached)));
+        dispatch(setSheetsAction(JSON.parse(cached)));
       }
     };
     loadCachedData();
@@ -156,7 +156,7 @@ const deleteCustomerRow = (sheetName: InventoryActionType, rowIndex: number) => 
   
   return {
     user,
-    customers,
+    sheets,
     showModal,
     search,
     setShowModal,
@@ -165,7 +165,7 @@ const deleteCustomerRow = (sheetName: InventoryActionType, rowIndex: number) => 
     handleTransactionSave: handleSaleSave,
     handleInventorySave,
     fetchCurrentUser,
-    fetchCustomerData,
+    fetchSheetData,
     handleGoogleLogin,
     handleLogout,
     deleteCustomerRow,

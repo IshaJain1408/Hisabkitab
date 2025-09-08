@@ -17,13 +17,13 @@ const TransactionScreen = () => {
 
   const {
     showModal,
-    customers,
+    sheets,
     setShowModal,
     handleTransactionSave: handleSaleSave,
     handlePurchaseSave,
     handleInventorySave,
     fetchCurrentUser,
-    fetchCustomerData,
+    fetchSheetData,
     deleteCustomerRow,
   } = useTransactionLogic();
 
@@ -33,7 +33,7 @@ const TransactionScreen = () => {
   useFocusEffect(
     useCallback(() => {
       fetchCurrentUser();
-      fetchCustomerData();
+      fetchSheetData();
 
       if (
         route.params?.selectedTab &&
@@ -41,7 +41,7 @@ const TransactionScreen = () => {
       ) {
         setActiveTab(route.params.selectedTab);
       }
-    }, [fetchCurrentUser, fetchCustomerData, route.params?.selectedTab]),
+    }, [fetchCurrentUser, fetchSheetData, route.params?.selectedTab]),
   );
 
   const getButtonText = () => {
@@ -66,7 +66,7 @@ const TransactionScreen = () => {
     <View style={styles.container}>
       <TransactionList
         activeTab={activeTab}
-        customers={customers}
+        sheets={sheets}
         deleteRow={deleteCustomerRow}
         onEdit={handleEdit}
       />
