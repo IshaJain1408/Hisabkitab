@@ -7,7 +7,6 @@ type BalanceSheet = {
   inventoryValue: number;
   profit: number;
   tradePayables: number;
-
 };
 
 export async function getBalanceSheet(

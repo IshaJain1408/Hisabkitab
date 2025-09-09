@@ -72,8 +72,6 @@ async function adjustInventoryOnDelete(
   ];
 
   await updateRow(spreadsheetId, accessToken, "Inventory", sheetRowIndex, updatedRow);
-
-
   await logInventoryChange(
     spreadsheetId,
     accessToken,
@@ -90,7 +88,6 @@ function calculateNewStock(sheetName: InventoryActionType, currentStock: number,
     case "Inventory": return currentStock;
   }
 }
-
 
 async function markRowAsDeleted(
   spreadsheetId: string,
