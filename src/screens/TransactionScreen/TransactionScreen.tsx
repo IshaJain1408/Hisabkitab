@@ -6,8 +6,8 @@ import TransactionModal from '../../components/common/TransactionModal/Transacti
 import { useTransactionLogic } from '../../hooks/UseTransactionLogic';
 import TransactionList from '../../components/user/TransactionList/TransactionList';
 import {
-  SHEET_NAMES,
-  TAB_BUTTON_TEXT,
+  SheetNames,
+  TabButtonText,
 } from '../../constants/TransactionConstants';
 import { parseRowData } from '../../utils/TransactionHelpers';
 
@@ -28,7 +28,7 @@ const TransactionScreen = () => {
   } = useTransactionLogic();
 
   const route = useRoute<any>();
-  const [activeTab, setActiveTab] = useState('Purchase');
+  const [activeTab, setActiveTab] = useState('Purchases');
 
   useFocusEffect(
     useCallback(() => {
@@ -37,7 +37,7 @@ const TransactionScreen = () => {
 
       if (
         route.params?.selectedTab &&
-        SHEET_NAMES.includes(route.params.selectedTab)
+        SheetNames.includes(route.params.selectedTab)
       ) {
         setActiveTab(route.params.selectedTab);
       }
@@ -45,11 +45,11 @@ const TransactionScreen = () => {
   );
 
   const getButtonText = () => {
-    return TAB_BUTTON_TEXT[activeTab] || '';
+    return TabButtonText[activeTab] || '';
   };
 
   const handleAction = () => {
-    if (activeTab !== 'Inventory Log') {
+    if (activeTab !== 'Inventory Logs') {
       setEditData(null);
       setEditIndex(undefined);
       setShowModal(true);
@@ -70,7 +70,7 @@ const TransactionScreen = () => {
         deleteRow={deleteCustomerRow}
         onEdit={handleEdit}
       />
-      {activeTab !== 'Inventory Log' && (
+      {activeTab !== 'Inventory Logs' && (
         <TouchableOpacity style={styles.actionButton} onPress={handleAction}>
           <Text style={styles.actionButtonText}>{getButtonText()}</Text>
         </TouchableOpacity>
@@ -80,7 +80,7 @@ const TransactionScreen = () => {
           visible={showModal}
           onClose={() => setShowModal(false)}
           onSave={
-            activeTab === 'Purchase'
+            activeTab === 'Purchases'
               ? handlePurchaseSave
               : activeTab === 'Inventory'
               ? handleInventorySave

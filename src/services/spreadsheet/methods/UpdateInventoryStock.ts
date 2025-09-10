@@ -1,13 +1,13 @@
-import { getTimestamp } from "../../../utils/DateUtils";
-import { normalizeString, parseIntSafe } from "../../../utils/SheetUtils";
-import { getSheetData } from "./GetSheetData";
-import { logInventoryChange } from "./logInventoryChange";
-import { handleError } from "../../../utils/ErrorHandler";
-import { updateRow } from "./UpdateRow";
-import { appendData } from "./AppendData";
-import { showErrorPopup } from "../../../components/popup/ErrorPopup/ErrorPopup";
-import { showSuccessPopup } from "../../../components/popup/SuccessPopup/SuccessPopup";
-import { InventoryData } from "../../../types/Index";
+import { getTimestamp } from '../../../utils/DateUtils';
+import { normalizeString, parseIntSafe } from '../../../utils/SheetUtils';
+import { getSheetData } from './GetSheetData';
+import { logInventoryChange } from './logInventoryChange';
+import { handleError } from '../../../utils/ErrorHandler';
+import { updateRow } from './UpdateRow';
+import { appendData } from './AppendData';
+import { showErrorPopup } from '../../../components/popup/ErrorPopup/ErrorPopup';
+import { showSuccessPopup } from '../../../components/popup/SuccessPopup/SuccessPopup';
+import { InventoryData } from '../../../types/Index';
 
 const HEADER_OFFSET = 2;
 
@@ -19,26 +19,44 @@ export async function updateInventoryStock(
   fetchSheetData?: () => void,
   setShowModal?: (v: boolean) => void,
   skipLog: boolean = false,
-  isMyProduct: boolean = true
+  isMyProduct: boolean = true,
 ): Promise<void> {
   if (!spreadsheetId || !accessToken) {
-    return showErrorPopup({ title: "Initialization Error", message: "Sheet not initialized" });
+    return showErrorPopup({
+      title: 'Initialization Error',
+      message: 'Sheet not initialized',
+    });
   }
 
   const updatedAt = `'${getTimestamp()}`;
-  const productName = (data.productName || "").trim();
+  const productName = (data.productName || '').trim();
   const quantity = parseIntSafe(data.quantity);
-  const unit = data.unit || "pcs";
+  const unit = data.unit || 'pcs';
 
   if (!productName || Number.isNaN(quantity)) {
-    return showErrorPopup({ title: "Invalid Data", message: "Invalid product name or quantity" });
+    return showErrorPopup({
+      title: 'Invalid Data',
+      message: 'Invalid product name or quantity',
+    });
   }
 
   try {
-    const inventoryData = await getSheetData(spreadsheetId, accessToken, "Inventory");
-    if (!inventoryData) return showErrorPopup({ title: "Error", message: "Failed to load inventory data" });
+    const inventoryData = await getSheetData(
+      spreadsheetId,
+      accessToken,
+      'Inventory',
+    );
+    if (!inventoryData)
+      return showErrorPopup({
+        title: 'Error',
+        message: 'Failed to load inventory data',
+      });
 
-    const { rowIndex, existingRow } = findInventoryRow(inventoryData, productName, editRowIndex);
+    const { rowIndex, existingRow } = findInventoryRow(
+      inventoryData,
+      productName,
+      editRowIndex,
+    );
 
     const oldQty = existingRow ? parseIntSafe(existingRow[1]) : 0;
 
@@ -52,40 +70,70 @@ export async function updateInventoryStock(
         quantity,
         unit,
         data.purchasingPrice,
-        updatedAt
+        updatedAt,
       );
     } else {
-      await appendInventoryRow(spreadsheetId, accessToken, productName, quantity, data.purchasingPrice, unit, updatedAt, isMyProduct);
+      await appendInventoryRow(
+        spreadsheetId,
+        accessToken,
+        productName,
+        quantity,
+        data.purchasingPrice,
+        unit,
+        updatedAt,
+        isMyProduct,
+      );
     }
 
     if (!skipLog) {
-      const changeQty = editRowIndex !== undefined && existingRow ? quantity - oldQty : quantity;
-      await logInventoryChange(spreadsheetId, accessToken, productName, changeQty, "Inventory");
+      const changeQty =
+        editRowIndex !== undefined && existingRow
+          ? quantity - oldQty
+          : quantity;
+      await logInventoryChange(
+        spreadsheetId,
+        accessToken,
+        productName,
+        changeQty,
+        'Inventory',
+      );
     }
 
-    if (isMyProduct) showSuccessPopup("Inventory updated!");
+    if (isMyProduct) showSuccessPopup('Inventory updated!');
     setShowModal?.(false);
     fetchSheetData?.();
   } catch (error) {
-    handleError("Inventory update", error, "An error occurred while updating inventory");
+    handleError(
+      'Inventory update',
+      error,
+      'An error occurred while updating inventory',
+    );
   }
 }
-
 
 function findInventoryRow(
   inventoryData: string[][],
   productName: string,
-  editRowIndex?: number
+  editRowIndex?: number,
 ): { rowIndex: number; existingRow?: string[] } {
   const normalizedName = normalizeString(productName);
 
   if (editRowIndex !== undefined) {
-    const rowIndex = inventoryData.findIndex((_, idx) => idx + HEADER_OFFSET === editRowIndex);
-    return { rowIndex, existingRow: rowIndex !== -1 ? inventoryData[rowIndex] : undefined };
+    const rowIndex = inventoryData.findIndex(
+      (_, idx) => idx + HEADER_OFFSET === editRowIndex,
+    );
+    return {
+      rowIndex,
+      existingRow: rowIndex !== -1 ? inventoryData[rowIndex] : undefined,
+    };
   }
-
-  const rowIndex = inventoryData.findIndex(row => normalizeString(row[0]) === normalizedName);
-  return { rowIndex, existingRow: rowIndex !== -1 ? inventoryData[rowIndex] : undefined };
+  const rowIndex = inventoryData.findIndex(
+    row => normalizeString(row[0]) === normalizedName,
+  );
+  return {
+    rowIndex,
+    existingRow: rowIndex !== -1 ? inventoryData[rowIndex] : undefined,
+  };
 }
 
 async function handleExistingInventoryRow(
@@ -97,39 +145,57 @@ async function handleExistingInventoryRow(
   quantity: number,
   unit: string,
   purchasingPrice: string,
-  updatedAt: string
+  updatedAt: string,
 ) {
   const currentStock = parseIntSafe(existingRow[1]);
   const newStock = Math.max(0, currentStock + quantity);
 
-  if (existingRow[7] === "FALSE") {
-    await updateRow(spreadsheetId, accessToken, "Inventory", rowIndex + HEADER_OFFSET, [
-      existingRow[0] || productName,
-      newStock.toString(),
-      updatedAt,
-      existingRow[3] || "",
-      purchasingPrice,
-      unit,
-      existingRow[6] || "FALSE",
-      "FALSE",
-    ]);
+  if (existingRow[7] === 'FALSE') {
+    await updateRow(
+      spreadsheetId,
+      accessToken,
+      'Inventory',
+      rowIndex + HEADER_OFFSET,
+      [
+        existingRow[0] || productName,
+        newStock.toString(),
+        updatedAt,
+        existingRow[3] || '',
+        purchasingPrice,
+        unit,
+        existingRow[6] || 'FALSE',
+        'FALSE',
+      ],
+    );
     return;
   }
 
-  const hasChanges = normalizeString(productName) !== normalizeString(existingRow[0]) ||
+  const hasChanges =
+    normalizeString(productName) !== normalizeString(existingRow[0]) ||
     newStock !== currentStock ||
     purchasingPrice !== existingRow[4] ||
     unit !== existingRow[5];
 
   if (hasChanges) {
-    await updateRow(spreadsheetId, accessToken, "Inventory", rowIndex + HEADER_OFFSET, [
-      ...existingRow.slice(0, 6),
-      "TRUE",
-      existingRow[7] || "FALSE",
-    ]);
+    await updateRow(
+      spreadsheetId,
+      accessToken,
+      'Inventory',
+      rowIndex + HEADER_OFFSET,
+      [...existingRow.slice(0, 6), 'TRUE', existingRow[7] || 'FALSE'],
+    );
 
-    const newRow = [productName, quantity.toString(), updatedAt, "FALSE", purchasingPrice, unit, "FALSE", "TRUE"];
-    await appendData(spreadsheetId, accessToken, "Inventory", [newRow]);
+    const newRow = [
+      productName,
+      quantity.toString(),
+      updatedAt,
+      'FALSE',
+      purchasingPrice,
+      unit,
+      'FALSE',
+      'TRUE',
+    ];
+    await appendData(spreadsheetId, accessToken, 'Inventory', [newRow]);
   }
 }
 
@@ -141,8 +207,17 @@ async function appendInventoryRow(
   purchasingPrice: string,
   unit: string,
   updatedAt: string,
-  isMyProduct: boolean
+  isMyProduct: boolean,
 ) {
-  const newRowData = [productName, quantity.toString(), updatedAt, "FALSE", purchasingPrice, unit, "FALSE", isMyProduct ? "TRUE" : "FALSE"];
-  await appendData(spreadsheetId, accessToken, "Inventory", [newRowData]);
+  const newRowData = [
+    productName,
+    quantity.toString(),
+    updatedAt,
+    'FALSE',
+    purchasingPrice,
+    unit,
+    'FALSE',
+    isMyProduct ? 'TRUE' : 'FALSE',
+  ];
+  await appendData(spreadsheetId, accessToken, 'Inventory', [newRowData]);
 }

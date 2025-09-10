@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, Image } from 'react-native';
 import styles from './TransactionList.styles';
 import { SheetListProps } from '../../../types/TransactionTypes';
-import { SECTION_TITLES } from '../../../constants/TransactionConstants';
+import { SectionTitles } from '../../../constants/TransactionConstants';
 import {
   isRowEmpty,
   shouldIncludeRow,
@@ -48,8 +48,6 @@ const TransactionList: React.FC<SheetListProps> = ({
     (a, b) => parseDate(b.row[3]).getTime() - parseDate(a.row[3]).getTime(),
   );
 
-  console.log(sortedData, 'sortedData');
-
   if (sortedData.length <= 0) {
     return (
       <View style={styles.imageContainer}>
@@ -67,14 +65,14 @@ const TransactionList: React.FC<SheetListProps> = ({
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.sectionTitle}>
-        {SECTION_TITLES[activeTab] || activeTab}
+        {SectionTitles[activeTab] || activeTab}
       </Text>
 
       {sortedData.map(({ row, originalIndex }, index) => {
         const displayData = getRowDisplayData(row, activeTab);
 
         let renderDateLabel = null;
-        if (activeTab === 'Inventory Log') {
+        if (activeTab === 'Inventory Logs') {
           const currentDate = formatOnlyDate(displayData.timestamp);
           if (currentDate !== lastRenderedDate) {
             renderDateLabel = (

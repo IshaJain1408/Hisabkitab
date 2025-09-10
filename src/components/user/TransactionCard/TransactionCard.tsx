@@ -28,7 +28,7 @@ const TransactionCard: React.FC<Props> = ({
 
   const getQuantity = () => {
     switch (activeTab) {
-      case 'Purchase':
+      case 'Purchases':
         return rowData[3];
       case 'Sales':
         return rowData[7];
@@ -45,7 +45,7 @@ const TransactionCard: React.FC<Props> = ({
         <Text style={styles.productName}>{productName || 'No Name'}</Text>
         {quantity && <Text style={styles.quantityText}>Qty: {quantity}</Text>}
 
-        {activeTab === 'Inventory Log' && (
+        {activeTab === 'Inventory Logs' && (
           <View style={styles.status}>
             <Text style={[styles.timestampText, styles.marginRight10]}>
               {formatOnlyTime(timestamp)}
@@ -67,7 +67,7 @@ const TransactionCard: React.FC<Props> = ({
       </View>
 
       {(activeTab === 'Inventory' && rowData[8] === 'TRUE') ||
-      (activeTab !== 'Inventory' && activeTab !== 'Inventory Log') ? (
+      (activeTab !== 'Inventory' && activeTab !== 'Inventory Logs') ? (
         <>
           <TouchableOpacity
             style={styles.marginLeft10}

@@ -8,13 +8,13 @@ export async function createSheet(token: string): Promise<string | null> {
       {
         properties: { title: `HisabKitab_Report` },
         sheets: [
-          { properties: { title: 'Purchase' } },
+          { properties: { title: 'Purchases' } },
           { properties: { title: 'Sales' } },
           { properties: { title: 'Inventory' } },
-          { properties: { title: 'Inventory Log' } }
-        ]
+          { properties: { title: 'Inventory Logs' } },
+        ],
       },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
 
     const spreadsheetId = response?.data?.spreadsheetId;
@@ -24,18 +24,47 @@ export async function createSheet(token: string): Promise<string | null> {
     }
 
     await Promise.all([
-      setSheetHeaders(token, spreadsheetId, 'Purchase', [
-  ['Product Name', 'Purchasing Price', 'Quantity', 'Unit', 'Attachment Link', 'Timestamp', 'IsDeleted','IsUpdated']
+      setSheetHeaders(token, spreadsheetId, 'Purchases', [
+        [
+          'Product Name',
+          'Purchasing Price',
+          'Quantity',
+          'Unit',
+          'Attachment Link',
+          'Timestamp',
+          'IsDeleted',
+          'IsUpdated',
+        ],
       ]),
       setSheetHeaders(token, spreadsheetId, 'Sales', [
-        ['Transaction ID', 'Timestamp', 'Customer Name', 'Product Name', 'Phone Number', 'Amount', 'Quantity', 'Message','IsDeleted','IsUpdated']
+        [
+          'Transaction ID',
+          'Timestamp',
+          'Customer Name',
+          'Product Name',
+          'Phone Number',
+          'Amount',
+          'Quantity',
+          'Message',
+          'IsDeleted',
+          'IsUpdated',
+        ],
       ]),
       setSheetHeaders(token, spreadsheetId, 'Inventory', [
-        ['Product Name', 'Current Stock', 'Last Updated','IsDeleted','Purchasing Price','Unit','IsUpdated','IsMyProduct']
+        [
+          'Product Name',
+          'Current Stock',
+          'Last Updated',
+          'IsDeleted',
+          'Purchasing Price',
+          'Unit',
+          'IsUpdated',
+          'IsMyProduct',
+        ],
       ]),
-      setSheetHeaders(token, spreadsheetId, 'Inventory Log', [
-        ['Product Name', 'Change in Stock', 'Timestamp', 'Source']
-      ])
+      setSheetHeaders(token, spreadsheetId, 'Inventory Logs', [
+        ['Product Name', 'Change in Stock', 'Timestamp', 'Source'],
+      ]),
     ]);
 
     return spreadsheetId;

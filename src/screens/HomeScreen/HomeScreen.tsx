@@ -42,7 +42,7 @@ const HomeScreen = () => {
 
         <View style={styles.cardContainer}>
           <Card
-            title="Purchase"
+            title="Purchases"
             color="#FEC27E"
             image={Images.purchase}
             onPress={() => handleCardPress('Purchase')}
@@ -60,10 +60,10 @@ const HomeScreen = () => {
             onPress={() => handleCardPress('Inventory')}
           />
           <Card
-            title="Inventory Log"
+            title="Inventory Logs"
             color="#FFCB91"
             image={Images.history}
-            onPress={() => handleCardPress('Inventory Log')}
+            onPress={() => handleCardPress('Inventory Logs')}
           />
         </View>
       </ScrollView>

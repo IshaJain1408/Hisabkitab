@@ -8,11 +8,13 @@ export async function logInventoryChange(
   productName: string,
   quantityChange: number,
   source: InventoryActionType,
-  timestamp?: string   
+  timestamp?: string,
 ): Promise<void> {
-  const finalTimestamp = timestamp || `'${getTimestamp()}`; 
+  const finalTimestamp = timestamp || `'${getTimestamp()}`;
   const sign = quantityChange > 0 ? '+' : '';
-  const values = [[productName, `${sign}${quantityChange}`, finalTimestamp, source]];
+  const values = [
+    [productName, `${sign}${quantityChange}`, finalTimestamp, source],
+  ];
 
-  await appendData(spreadsheetId, token, 'Inventory Log', values);
+  await appendData(spreadsheetId, token, 'Inventory Logs', values);
 }

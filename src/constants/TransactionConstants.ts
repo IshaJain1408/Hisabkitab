@@ -1,26 +1,26 @@
-export const SHEET_NAMES = ['Purchase', 'Sales', 'Inventory', 'Inventory Log'];
+export const SheetNames = ['Purchases', 'Sales', 'Inventory', 'Inventory Logs'];
 
-export const SECTION_TITLES: Record<string, string> = {
-  Purchase: 'Purchase History',
+export const SectionTitles: Record<string, string> = {
+  Purchases: 'Purchase History',
   Sales: 'Sales History',
   Inventory: 'Inventory Items',
-  'Inventory Log': 'Inventory Logs',
+  'Inventory Logs': 'Inventory Logs',
 };
 
-export const DELETED_COLUMN_INDEX: Record<string, number> = {
-  Purchase: 7,
+export const DeletedColumnIndex: Record<string, number> = {
+  Purchases: 7,
   Sales: 9,
   Inventory: 4,
 };
 
-export const UPDATED_COLUMN_INDEX: Record<string, number> = {
+export const UpdatedColumnIndex: Record<string, number> = {
   Sales: 10,
   Inventory: 7,
-  Purchase: 8,
+  Purchases: 8,
 };
 
-export const TAB_BUTTON_TEXT: Record<string, string> = {
-  Purchase: 'Add Purchase',
+export const TabButtonText: Record<string, string> = {
+  Purchases: 'Add Purchase',
   Sales: 'Add Sale',
   Inventory: 'Add Inventory',
 };

@@ -1,19 +1,17 @@
-import { getSheetData } from "./GetSheetData";
-import { updateInventoryStock } from "./UpdateInventoryStock";
-import { appendData } from "./AppendData";
-import { logInventoryChange } from "./logInventoryChange";
-import { handleError } from "../../../utils/ErrorHandler";
-import { markRowAsUpdated } from "./MarkRowAsUpdated";
-import { showErrorPopup } from "../../../components/popup/ErrorPopup/ErrorPopup";
-import { showSuccessPopup } from "../../../components/popup/SuccessPopup/SuccessPopup";
-import { getTimestamp } from "../../../utils/DateUtils";
-import { PurchaseData } from "../../../types/Index";
+import { getSheetData } from './GetSheetData';
+import { updateInventoryStock } from './UpdateInventoryStock';
+import { appendData } from './AppendData';
+import { logInventoryChange } from './logInventoryChange';
+import { handleError } from '../../../utils/ErrorHandler';
+import { markRowAsUpdated } from './MarkRowAsUpdated';
+import { showErrorPopup } from '../../../components/popup/ErrorPopup/ErrorPopup';
+import { showSuccessPopup } from '../../../components/popup/SuccessPopup/SuccessPopup';
+import { getTimestamp } from '../../../utils/DateUtils';
+import { PurchaseData } from '../../../types/Index';
 
-
-const HEADER_OFFSET = 2; 
-const NO_ATTACHMENT = "No Attachment";
-const DEFAULT_FLAGS = ["FALSE", "FALSE"];
-
+const HEADER_OFFSET = 2;
+const NO_ATTACHMENT = 'No Attachment';
+const DEFAULT_FLAGS = ['FALSE', 'FALSE'];
 
 export async function handlePurchase(
   spreadsheetId: string | null,
@@ -21,48 +19,99 @@ export async function handlePurchase(
   data: PurchaseData,
   editRowIndex?: number,
   fetchSheetData?: () => void,
-  setShowModal?: (v: boolean) => void
+  setShowModal?: (v: boolean) => void,
 ) {
-  if (!spreadsheetId || !accessToken) return showErrorPopup({ title: 'Error', message: 'Sheet not initialized' });
+  if (!spreadsheetId || !accessToken)
+    return showErrorPopup({ title: 'Error', message: 'Sheet not initialized' });
 
   const timestamp = `'${getTimestamp()}`;
-  const newQty = parseInt(data.quantity || "0", 10);
+  const newQty = parseInt(data.quantity || '0', 10);
 
   const rowValues = prepareRowValues(data, timestamp);
 
   try {
-    const purchaseData = await getSheetData(spreadsheetId, accessToken, "Purchase");
-    if (!purchaseData) return showErrorPopup({ title: 'Error', message: 'Failed to load purchase data' });
+    const purchaseData = await getSheetData(
+      spreadsheetId,
+      accessToken,
+      'Purchases',
+    );
+    if (!purchaseData)
+      return showErrorPopup({
+        title: 'Error',
+        message: 'Failed to load purchase data',
+      });
 
     if (editRowIndex !== undefined) {
-      await handleEditPurchase(spreadsheetId, accessToken, purchaseData, editRowIndex, data, newQty);
+      await handleEditPurchase(
+        spreadsheetId,
+        accessToken,
+        purchaseData,
+        editRowIndex,
+        data,
+        newQty,
+      );
     } else if (newQty > 0) {
-      await updateInventoryForProduct(spreadsheetId, accessToken, data.productName, newQty, data.unit, data.purchasingPrice);
-
+      await updateInventoryForProduct(
+        spreadsheetId,
+        accessToken,
+        data.productName,
+        newQty,
+        data.unit,
+        data.purchasingPrice,
+      );
     }
 
-    const success = await appendData(spreadsheetId, accessToken, "Purchase", [rowValues]);
-    if (!success) return showErrorPopup({ title: 'Error', message: 'Failed to save purchase' });
+    const success = await appendData(spreadsheetId, accessToken, 'Purchases', [
+      rowValues,
+    ]);
+    if (!success)
+      return showErrorPopup({
+        title: 'Error',
+        message: 'Failed to save purchase',
+      });
 
     const oldQty = await getOldPurchaseQtyIfEditing(purchaseData, editRowIndex);
-    await logInventoryChange(spreadsheetId, accessToken, data.productName, editRowIndex ? newQty - oldQty : newQty, "Purchase");
+    await logInventoryChange(
+      spreadsheetId,
+      accessToken,
+      data.productName,
+      editRowIndex ? newQty - oldQty : newQty,
+      'Purchases',
+    );
 
-    showSuccessPopup(editRowIndex !== undefined ? 'Purchase updated!' : 'Purchase saved!');
+    showSuccessPopup(
+      editRowIndex !== undefined ? 'Purchase updated!' : 'Purchase saved!',
+    );
     setShowModal?.(false);
     fetchSheetData?.();
   } catch (error) {
-    handleError("Purchase save/update", error, "An error occurred while saving the purchase");
+    handleError(
+      'Purchase save/update',
+      error,
+      'An error occurred while saving the purchase',
+    );
   }
 }
 
-function prepareRowValues(data: PurchaseData, timestamp: string): (string)[] {
-  return [data.productName, data.purchasingPrice, data.quantity, data.unit, NO_ATTACHMENT, timestamp, ...DEFAULT_FLAGS];
+function prepareRowValues(data: PurchaseData, timestamp: string): string[] {
+  return [
+    data.productName,
+    data.purchasingPrice,
+    data.quantity,
+    data.unit,
+    NO_ATTACHMENT,
+    timestamp,
+    ...DEFAULT_FLAGS,
+  ];
 }
 
-async function getOldPurchaseQtyIfEditing(purchaseData: string[][], editRowIndex?: number): Promise<number> {
+async function getOldPurchaseQtyIfEditing(
+  purchaseData: string[][],
+  editRowIndex?: number,
+): Promise<number> {
   if (editRowIndex === undefined) return 0;
   const oldRow = purchaseData[editRowIndex - HEADER_OFFSET];
-  return oldRow ? parseInt(oldRow[2] || "0", 10) : 0;
+  return oldRow ? parseInt(oldRow[2] || '0', 10) : 0;
 }
 
 async function handleEditPurchase(
@@ -71,20 +120,41 @@ async function handleEditPurchase(
   purchaseData: string[][],
   editRowIndex: number,
   data: PurchaseData,
-  newQty: number
+  newQty: number,
 ) {
   const oldRow = purchaseData[editRowIndex - HEADER_OFFSET];
-  const oldQty = oldRow ? parseInt(oldRow[2] || "0", 10) : 0;
-  const oldName = oldRow ? (oldRow[0] || "").trim() : "";
+  const oldQty = oldRow ? parseInt(oldRow[2] || '0', 10) : 0;
+  const oldName = oldRow ? (oldRow[0] || '').trim() : '';
 
-  await markRowAsUpdated(spreadsheetId, accessToken, "Purchase", editRowIndex);
-console.log(data,"data")
+  await markRowAsUpdated(spreadsheetId, accessToken, 'Purchases', editRowIndex);
+  console.log(data, 'data');
   if (oldName === data.productName) {
     const deltaQty = newQty - oldQty;
-    await updateInventoryForProduct(spreadsheetId, accessToken, data.productName, deltaQty, data.unit, data.purchasingPrice);
+    await updateInventoryForProduct(
+      spreadsheetId,
+      accessToken,
+      data.productName,
+      deltaQty,
+      data.unit,
+      data.purchasingPrice,
+    );
   } else {
-    await updateInventoryForProduct(spreadsheetId, accessToken, oldName, -oldQty, data.unit, data.purchasingPrice);
-    await updateInventoryForProduct(spreadsheetId, accessToken, data.productName, newQty, data.unit, data.purchasingPrice);
+    await updateInventoryForProduct(
+      spreadsheetId,
+      accessToken,
+      oldName,
+      -oldQty,
+      data.unit,
+      data.purchasingPrice,
+    );
+    await updateInventoryForProduct(
+      spreadsheetId,
+      accessToken,
+      data.productName,
+      newQty,
+      data.unit,
+      data.purchasingPrice,
+    );
   }
 }
 
@@ -94,7 +164,7 @@ async function updateInventoryForProduct(
   productName: string,
   quantity: number,
   unit: string,
-  purchasingPrice: string 
+  purchasingPrice: string,
 ) {
   if (!productName) return;
 
@@ -111,6 +181,6 @@ async function updateInventoryForProduct(
     undefined,
     undefined,
     true,
-    false
+    false,
   );
 }

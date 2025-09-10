@@ -10,19 +10,28 @@ import { InventoryActionType } from "../google/GoogleSheetService";
 const HEADER_OFFSET = 2; 
 
 const statusColumnIndex: Record<InventoryActionType, number> = {
-  Purchase: 6,  
-  Sales: 8,     
-  Inventory: 3, 
+  Purchases: 6,
+  Sales: 8,
+  Inventory: 3,
 };
 
 function extractProductInfo(sheetName: InventoryActionType, row: string[]): { productName: string; quantity: number } {
   switch (sheetName) {
-    case "Sales":
-      return { productName: row[3]?.trim() || "", quantity: parseIntSafe(row[6]) };
-    case "Purchase":
-      return { productName: row[0]?.trim() || "", quantity: parseIntSafe(row[2]) };
-    case "Inventory":
-      return { productName: row[0]?.trim() || "", quantity: parseIntSafe(row[1]) };
+    case 'Sales':
+      return {
+        productName: row[3]?.trim() || '',
+        quantity: parseIntSafe(row[6]),
+      };
+    case 'Purchases':
+      return {
+        productName: row[0]?.trim() || '',
+        quantity: parseIntSafe(row[2]),
+      };
+    case 'Inventory':
+      return {
+        productName: row[0]?.trim() || '',
+        quantity: parseIntSafe(row[1]),
+      };
   }
 }
 
@@ -83,9 +92,12 @@ async function adjustInventoryOnDelete(
 
 function calculateNewStock(sheetName: InventoryActionType, currentStock: number, quantity: number): number {
   switch (sheetName) {
-    case "Purchase": return currentStock - quantity;
-    case "Sales": return currentStock + quantity;
-    case "Inventory": return currentStock;
+    case 'Purchases':
+      return currentStock - quantity;
+    case 'Sales':
+      return currentStock + quantity;
+    case 'Inventory':
+      return currentStock;
   }
 }
 

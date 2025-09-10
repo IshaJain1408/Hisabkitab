@@ -11,7 +11,7 @@ import { updateRow } from '../methods/UpdateRow';
 import { markRowAsUpdated } from '../methods/MarkRowAsUpdated';
 import { getBalanceSheet } from '../methods/GetBalanceSheet';
 
-export type InventoryActionType = 'Purchase' | 'Sales' | 'Inventory';
+export type InventoryActionType = 'Purchases' | 'Sales' | 'Inventory';
 
 export class GoogleSheetService {
   static sheetExists = sheetExists;
@@ -26,5 +26,4 @@ export class GoogleSheetService {
   static deleteRow = deleteRow;
   static updateRow = updateRow;
   static markRowAsUpdated = markRowAsUpdated;
-
 }

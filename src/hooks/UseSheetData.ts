@@ -9,7 +9,7 @@ import {
 import { setAccessToken as setAccessTokenAction } from '../redux/slices/UserSlice';
 import { GoogleAuthService } from '../services/spreadsheet/google/GoogleAuthService';
 import { GoogleSheetService } from '../services/spreadsheet/google/GoogleSheetService';
-import { SHEET_NAMES } from '../constants/TransactionConstants';
+import { SheetNames } from '../constants/TransactionConstants';
 
 export const useSheetData = (isConnected: boolean | null) => {
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ export const useSheetData = (isConnected: boolean | null) => {
         if (!token) return;
         const allData: string[][] = [];
 
-        for (const sheetName of SHEET_NAMES) {
+        for (const sheetName of SheetNames) {
           const sheetData = await GoogleSheetService.getSheetData(spreadsheetId, token, sheetName);
           if (sheetData?.length) {
             allData.push(...sheetData.map(row => [sheetName, ...row]));

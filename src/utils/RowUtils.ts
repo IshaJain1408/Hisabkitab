@@ -1,31 +1,52 @@
-import { DELETED_COLUMN_INDEX, UPDATED_COLUMN_INDEX } from '../constants/TransactionConstants';
+import {
+  DeletedColumnIndex,
+  UpdatedColumnIndex,
+} from '../constants/TransactionConstants';
 import { RowDisplayData } from '../types/transactionTypes';
 
-export const isRowEmpty = (row: string[]) => row.every(cell => !cell || cell.trim() === '');
+export const isRowEmpty = (row: string[]) =>
+  row.every(cell => !cell || cell.trim() === '');
 
 export const shouldIncludeRow = (row: string[], activeTab: string): boolean => {
-  const deletedIndex = DELETED_COLUMN_INDEX[activeTab];
-  const updatedIndex = UPDATED_COLUMN_INDEX[activeTab];
+  const deletedIndex = DeletedColumnIndex[activeTab];
+  const updatedIndex = UpdatedColumnIndex[activeTab];
 
   if (deletedIndex === undefined || updatedIndex === undefined) return true;
 
-  const status = row[deletedIndex]?.toLowerCase() || '';
-  const isUpdated = (row[updatedIndex] || '').toString().toLowerCase() === 'true';
+  const isDeleted = row[deletedIndex]?.toLowerCase() || '';
+  const isUpdated =
+    (row[updatedIndex] || '').toString().toLowerCase() === 'true';
 
-  return status !== 'true' && !isUpdated;
+  return isDeleted !== 'true' && !isUpdated;
 };
 
-export const getRowDisplayData = (row: string[], activeTab: string): RowDisplayData => {
+export const getRowDisplayData = (
+  row: string[],
+  activeTab: string,
+): RowDisplayData => {
   switch (activeTab) {
-    case 'Purchase':
-      return { productName: row[1], displayValue: `₹ ${row[2]}`, timestamp: row[5] };
+    case 'Purchases':
+      return {
+        productName: row[1],
+        displayValue: `₹ ${row[2]}`,
+        timestamp: row[5],
+      };
     case 'Sales':
-      return { productName: row[4], displayValue: `₹ ${row[6]}`, timestamp: row[7] };
+      return {
+        productName: row[4],
+        displayValue: `₹ ${row[6]}`,
+        timestamp: row[7],
+      };
     case 'Inventory':
-      return { productName: row[1], displayValue: `Qty ${row[2]}`, timestamp: row[5] };
-    case 'Inventory Log': {
+      return {
+        productName: row[1],
+        displayValue: `Qty ${row[2]}`,
+        timestamp: row[5],
+      };
+    case 'Inventory Logs': {
       const qtyNumber = Number(row[2]);
-      const isAdded = (row[4] === 'Purchase' || row[4] === 'Inventory') && qtyNumber >= 0;
+      const isAdded =
+        (row[4] === 'Purchases' || row[4] === 'Inventory') && qtyNumber >= 0;
       return {
         productName: row[1],
         displayValue: `Qty ${Math.abs(qtyNumber)}`,

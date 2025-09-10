@@ -28,10 +28,10 @@ const Header: React.FC<HeaderProps> = ({ userName, handleLogout }) => {
   const navigation = useNavigation<any>();
 
   const menuItems = [
-    { label: 'Purchase', icon: 'cart-outline' },
+    { label: 'Purchases', icon: 'cart-outline' },
     { label: 'Sales', icon: 'cash-outline' },
     { label: 'Inventory', icon: 'cube-outline' },
-    { label: 'Inventory Log', icon: 'document-text-outline' },
+    { label: 'Inventory Logs', icon: 'document-text-outline' },
   ];
 
   useEffect(() => {

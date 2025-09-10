@@ -52,7 +52,7 @@ const TransactionModal: React.FC<Props> = ({
 
           <Text style={styles.title}>
             {editRowIndex !== undefined ? 'Edit' : 'Add'}{' '}
-            {activeTab === 'Purchase'
+            {activeTab === 'Purchases'
               ? 'Purchase'
               : activeTab === 'Sales'
               ? 'Sale'
@@ -64,7 +64,7 @@ const TransactionModal: React.FC<Props> = ({
             <ActivityIndicator size="large" color="#FFA500" />
           ) : (
             <>
-              {activeTab === 'Purchase' && (
+              {activeTab === 'Purchases' && (
                 <PurchaseForm
                   onSave={handleSave}
                   initialValues={initialValues}

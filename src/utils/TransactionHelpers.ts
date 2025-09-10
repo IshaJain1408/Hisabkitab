@@ -1,9 +1,9 @@
 export const parseRowData = (
   activeTab: string,
-  rowData: string[]
+  rowData: string[],
 ): Record<string, any> => {
   switch (activeTab) {
-    case 'Purchase':
+    case 'Purchases':
       return {
         productName: rowData[1] || '',
         purchasingPrice: rowData[2] || '',
